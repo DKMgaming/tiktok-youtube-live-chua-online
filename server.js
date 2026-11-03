@@ -754,6 +754,8 @@ const EMOJI_RITUAL_PATTERNS = {
   incense: /(?:🔥|🕯️|🪔|♨️|🙏|:fire:|:candle:|:pray:|:folded_hands:)/u
 };
 
+const commentCooldownMap = new Map();
+
 function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tiktok') {
   const raw = String(commentText || '').trim();
   if (!raw || isBlockedSpamOrToxic(raw)) {

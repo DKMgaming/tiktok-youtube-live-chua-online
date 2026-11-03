@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bảng Điều Khiển JSON-RPC 2.0 — Chùa Linh Ứng TikTok Live</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Noto+Serif:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #120504;
+      --card: #210906;
+      --border: rgba(244, 193, 80, 0.38);
+      --gold: #f4c150;
+      --gold-light: #ffe694;
+      --text: #fff8eb;
+      --muted: #d6ba8a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 0%, #330c08 0%, #100302 80%);
+      color: var(--text);
+      font-family: 'Be Vietnam Pro', sans-serif;
+      min-height: 100vh;
+      padding: 28px;
+    }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 24px;
+    }
+    .top-title {
+      font-family: 'Noto Serif', serif;
+      font-size: 26px;
+      color: var(--gold-light);
+    }
+    .top-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .top-links {
+      display: flex;
+      gap: 12px;
+    }
+    .btn {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #6b140e 0%, #3d0906 100%);
+      color: var(--gold-light);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn.gold {
+      background: linear-gradient(180deg, #f4c150 0%, #c48312 100%);
+      color: #1f0604;
+      border-color: #fff3b0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .card h2 {
+      font-size: 18px;
+      color: var(--gold-light);
+      border-bottom: 1px solid rgba(244, 193, 80, 0.2);
+      padding-bottom: 10px;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: #120403;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+    }
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    pre {
+      background: #0b0202;
+      border: 1px solid rgba(244, 193, 80, 0.25);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 12.5px;
+      color: #9ef0c0;
+      overflow-x: auto;
+      max-height: 280px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="top-bar">
+      <div>
+        <div class="top-title">🪷 BẢNG ĐIỀU KHIỂN CHÙA ONLINE TIKTOK LIVE RPC (BUN.JS + ZEROTTS MAI CHI)</div>
+        <div class="top-sub" id="statusBanner">Đang tải trạng thái hệ thống...</div>
+      </div>
+      <div class="top-links">
+        <a class="btn" href="/?obs=1" target="_blank">📺 Mở Màn Hình OBS 9:16 Sạch (?obs=1)</a>
+        <a class="btn gold" href="/" target="_blank">🪷 Mở Màn Hình Live Chính</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>📡 1. Kết Nối Phòng TikTok Live & Giọng Đọc ZeroTTS (Mai Chi)</h2>
+        <div class="row">
+          <input type="text" id="ttUser" placeholder="Nhập @username TikTok đang phát Live..." />
+          <button class="btn gold" id="btnConn">Kết Nối TikTok</button>
+          <button class="btn" id="btnDisc">Ngắt</button>
+        </div>
+        <div class="row">
+          <input type="text" id="ytTarget" placeholder="Nhập link YouTube Live, @kênh hoặc Video ID..." />
+          <button class="btn gold" id="btnConnYt">Kết Nối YouTube</button>
+          <button class="btn" id="btnDiscYt">Ngắt</button>
+        </div>
+        <div class="row">
+          <input type="text" id="ttsDirectText" value="Nam mô A Di Đà Phật. Chùa Linh Ứng Online xin kính chào quý thí chủ thập phương." />
+          <button class="btn gold" id="btnSpeakMaiChi">🎙️ Đọc thử Giọng Mai Chi</button>
+        </div>
+        <audio id="adminAudioPreview" controls style="width: 100%; height: 38px;"></audio>
+      </section>
+
+      <section class="card">
+        <h2>🙏 2. Gửi Lệnh Tương Tác JSON-RPC 2.0</h2>
+        <div class="row">
+          <input type="text" id="rpcUser" value="Đại Thí Chủ Minh Tâm" placeholder="Tên người xem..." />
+          <input type="text" id="rpcWish" value="Cầu gia đạo bình an, tài lộc vượng phát" placeholder="Lời cầu nguyện..." />
+        </div>
+        <div class="action-grid">
+          <button class="btn gold" onclick="sendRpc('temple.burnIncense', { count: 3 })">🔥 Thắp 3 Nén Hương</button>
+          <button class="btn" onclick="sendRpc('temple.sendPrayer', {})">🏮 Thả Đèn Hoa Đăng</button>
+          <button class="btn" onclick="sendRpc('temple.strikeWoodenFish', { count: 9 })">🪵 Gõ Mõ 9 Nhịp</button>
+          <button class="btn" onclick="sendRpc('temple.ringBell', { count: 1, readTts: true })">🔔 Thỉnh Đại Hồng Chung</button>
+          <button class="btn" onclick="sendRpc('temple.drawFortune', {})">🎋 Xin Xăm / Gieo Quẻ</button>
+          <button class="btn" onclick="sendRpc('temple.offerGift', { giftType: 'fruit', coins: 30, giftName: 'Mâm Ngũ Quả Cát Tường' })">🍑 Dâng Mâm Ngũ Quả</button>
+          <button class="btn gold" onclick="sendRpc('temple.grandCeremony', { coins: 500, giftName: 'Đại Lễ Kim Long Chầu Phật' })">🐉 Đại Lễ Kim Long</button>
+          <button class="btn" onclick="sendRpc('temple.resetMerit', {})">♻️ Đặt Lại Bảng Công Đức</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>💬 3. Giả Lập Bình Luận Người Xem TikTok</h2>
+        <div class="row">
+          <input type="text" id="simComment" value="Con xin gieo quẻ cầu tài lộc đầu tháng ạ" placeholder="Nhập nội dung bình luận TikTok..." />
+          <button class="btn gold" id="btnSendComment">Gửi Comment</button>
+        </div>
+        <p style="font-size: 13px; color: var(--muted);">
+          Từ khóa tự động nhận diện: <code>thắp hương</code>, <code>bái phật</code>, <code>cầu ...</code>, <code>xin xăm / gieo quẻ</code>, <code>thỉnh chuông</code>, <code>gõ mõ</code>.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>🔌 4. Nhật Ký Phản Hồi JSON-RPC 2.0 (`/rpc`)</h2>
+        <pre id="rpcOutput">{ "status": "Sẵn sàng nhận lệnh JSON-RPC 2.0" }</pre>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    async function sendRpc(method, extraParams = {}) {
+      const user = document.getElementById('rpcUser').value.trim() || 'Thí Chủ';
+      const wish = document.getElementById('rpcWish').value.trim();
+      const body = {
+        jsonrpc: '2.0',
+        id: Date.now(),
+        method,
+        params: { user, wish, ...extraParams }
+      };
+      const res = await fetch('/rpc', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      document.getElementById('rpcOutput').textContent = JSON.stringify(data, null, 2);
+      refreshStatus();
+      return data;
+    }
+
+    document.getElementById('btnConn').onclick = () => {
+      const username = document.getElementById('ttUser').value.trim();
+      sendRpc('live.connect', { username });
+    };
+    document.getElementById('btnDisc').onclick = () => sendRpc('live.disconnect', {});
+    document.getElementById('btnConnYt').onclick = () => {
+      const target = document.getElementById('ytTarget').value.trim();
+      if (!target) return alert('Vui lòng nhập link YouTube Live hoặc @kênh');
+      sendRpc('live.connectYouTube', { target });
+    };
+    document.getElementById('btnDiscYt').onclick = () => sendRpc('live.disconnectYouTube', {});
+    document.getElementById('btnSendComment').onclick = () => {
+      const comment = document.getElementById('simComment').value.trim();
+      sendRpc('temple.comment', { comment });
+    };
+    document.getElementById('btnSpeakMaiChi').onclick = async () => {
+      const text = document.getElementById('ttsDirectText').value.trim();
+      const data = await sendRpc('temple.speak', { text, voice: 'maichi', broadcast: true });
+      if (data?.result?.url) {
+        const player = document.getElementById('adminAudioPreview');
+        player.src = data.result.url;
+        player.play().catch(() => {});
+      }
+    };
+
+    async function refreshStatus() {
+      const res = await fetch('/api/state');
+      const st = await res.json();
+      document.getElementById('statusBanner').textContent =
+        `Hương đã thắp: ${st.totalIncense} | Tổng Công Đức: ${st.totalMerit} | ZeroTTS: ${st.tts?.status} (Giọng: ${st.tts?.voice})`;
+    }
+    refreshStatus();
+    setInterval(refreshStatus, 4000);
+  </script>
+</body>
+</html>

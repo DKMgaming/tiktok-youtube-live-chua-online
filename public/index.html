@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chùa Linh Ứng Online — TikTok Live RPC (Đức Phật A Di Đà 9:16)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Noto+Serif:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/live.css" />
+</head>
+<body>
+  <div class="app-workspace">
+    <!-- ====================================================================
+         KHUNG 9:16 CHUẨN TIKTOK LIVE / OBS BROWSER SOURCE (1080 x 1920)
+         ==================================================================== -->
+    <div class="stage-wrapper" id="stageWrapper">
+      <div class="stage-9x16" id="stage9x16">
+        <!-- 1. HÌNH NỀN CHÁNH ĐIỆN ĐỨC PHẬT A DI ĐÀ 8K SẮC NÉT -->
+        <img
+          src="/assets/amitabha_stage.png"
+          alt="Đức Phật A Di Đà Chánh Điện"
+          class="sanctuary-bg-img"
+          onerror="if (!this.src.endsWith('.jpg')) this.src='/assets/amitabha_stage.jpg';"
+        />
+
+        <!-- 1B. HỆ THỐNG HÀO QUANG ĐỨC PHẬT A DI ĐÀ (XOAY CHUYỂN VẠN TRƯỢNG, KHÔNG CHE MẶT PHẬT) -->
+        <div class="buddha-halo-system" id="buddhaHaloSystem">
+          <div class="halo-sunburst"></div>
+          <div class="halo-counter-rays"></div>
+          <div class="halo-pulse-ring ring-1"></div>
+          <div class="halo-pulse-ring ring-2"></div>
+          <svg class="halo-dharma-svg" viewBox="0 0 680 680">
+            <g class="dharma-wheel-outer" stroke="#fff2a6" fill="none">
+              <circle cx="340" cy="340" r="295" stroke-width="2.2" stroke-dasharray="14 10" stroke-opacity="0.78" />
+              <circle cx="340" cy="340" r="252" stroke-width="1.8" stroke-dasharray="6 8" stroke-opacity="0.65" />
+              <circle cx="340" cy="340" r="210" stroke-width="2.5" stroke-opacity="0.7" />
+            </g>
+            <g class="dharma-wheel-inner" stroke="#ffe47a" fill="none">
+              <circle cx="340" cy="340" r="168" stroke-width="2.2" stroke-dasharray="20 12" stroke-opacity="0.85" />
+              <circle cx="340" cy="340" r="134" stroke-width="1.6" stroke-opacity="0.65" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- HÀO QUANG ĐÀI SEN TRÊN TAY ĐỨC PHẬT A DI ĐÀ -->
+        <div class="lotus-hand-halo" id="lotusHandHalo"></div>
+
+        <!-- 2. THANH TRẠNG THÁI MỎNG TRÊN ĐỈNH (KHÔNG CHE TƯỢNG PHẬT) -->
+        <header class="minimal-top-bar">
+          <div class="live-pill" id="liveStatusPill">
+            <span class="live-dot" id="liveDot"></span>
+            <span id="liveStatusText">CHÙA LINH ỨNG • ĐỨC PHẬT A DI ĐÀ</span>
+          </div>
+          <div class="top-Right-badges">
+            <div class="mini-stat-pill">
+              🔥 <strong id="statIncense">108</strong> hương • ✨ <strong id="statMerit">1,080</strong> CĐ
+            </div>
+          </div>
+        </header>
+
+        <!-- 3. CỘT SÁNG TÂM HƯƠNG & LƯ HƯƠNG TRUNG TÂM -->
+        <div class="sacred-light-beam" id="sacredLightBeam"></div>
+
+        <div class="incense-burner-zone" id="incenseBurnerZone" title="Bấm để Thắp Hương Dâng Phật">
+          <div class="incense-sticks-holder" id="incenseSticksHolder"></div>
+        </div>
+
+        <!-- PHÁP KHÍ TƯƠNG TÁC HAI BÊN BÀN THỜ: ĐẠI HỒNG CHUNG & MÕ GỖ & ỐNG XĂM -->
+        <div class="ritual-hotspot bell-hotspot" id="bellStation" title="Bấm để Thỉnh Đại Hồng Chung">
+          <span class="hotspot-icon">🔔</span>
+          <span class="hotspot-label">Thỉnh Chuông</span>
+        </div>
+
+        <div class="ritual-hotspot woodfish-hotspot" id="woodenFishStation" title="Bấm để Gõ Mõ Tích Công Đức">
+          <span class="hotspot-icon">🪵</span>
+          <span class="hotspot-label">Gõ Mõ (<span id="statWoodenFish">360</span>)</span>
+        </div>
+
+        <div class="ritual-hotspot fortune-hotspot" id="fortuneCylinder" title="Bấm để Xin Xăm / Gieo Quẻ">
+          <span class="hotspot-icon">🎋</span>
+          <span class="hotspot-label">Xin Xăm</span>
+        </div>
+
+        <!-- 4. CHỦ LỄ ĐANG DÂNG HƯƠNG TRƯỚC LƯ HƯƠNG ĐỒNG (GIỮA CHÁNH ĐIỆN) -->
+        <div class="central-worshipper" id="centralWorshipper">
+          <div class="worshipper-wish-bubble" id="centralWishBubble">
+            “Cầu gia đình bình an, vạn sự cát tường như ý”
+          </div>
+          <div class="central-sprite-stack" id="centralSpriteStack">
+            <img src="/assets/devotee_walk.png" data-pose="walk1" class="devotee-sprite pose-frame" alt="" />
+            <img src="/assets/devotee_walk_2.png" data-pose="walk2" class="devotee-sprite pose-frame" alt="" />
+            <img src="/assets/devotee_kneel_down.png" data-pose="kneelDown" class="devotee-sprite pose-frame" alt="" />
+            <img src="/assets/devotee.png" data-pose="kneel" class="devotee-sprite pose-frame active" alt="" />
+            <img src="/assets/devotee_bow.png" data-pose="forehead" class="devotee-sprite pose-frame" alt="" />
+            <img src="/assets/devotee_bow_mid.png" data-pose="bowMid" class="devotee-sprite pose-frame" alt="" />
+            <img src="/assets/devotee_prostrate.png" data-pose="prostrate" class="devotee-sprite pose-frame" alt="" />
+            <img src="/assets/devotee_prostrate_deep.png" data-pose="prostrateDeep" class="devotee-sprite pose-frame" alt="" />
+          </div>
+          <div class="name-tag central-name-tag">
+            <div class="tag-avatar" id="centralAvatar">🙏</div>
+            <div class="tag-texts">
+              <div class="tag-name" id="centralName">Thí Chủ Minh Tâm</div>
+              <div class="tag-sub" id="centralAction">✨ Dâng hương • +15 Công Đức</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. HÀNG 6 ĐỆM QUỲ VIP (TOP 6 BẢNG VÀNG CÔNG ĐỨC TRÊN BỤC GỖ) -->
+        <div class="vip-cushions-layer" id="vipCushionsLayer"></div>
+
+        <!-- 6. ĐẠO TRÀNG NGƯỜI XEM QUỲ LỄ HAI BÊN THẢM ĐỎ (40 CHỖ NGỒI PHỐI CẢNH) -->
+        <div class="congregation-hall" id="congregationHall"></div>
+
+        <!-- 7. NGƯỜI XEM ĐANG BƯỚC ĐI TRÊN THẢM ĐỎ TIẾN LÊN DÂNG HƯƠNG -->
+        <div class="carpet-walker-layer" id="carpetWalkerLayer"></div>
+
+        <!-- 8. ĐÈN HOA ĐĂNG / SỚ CẦU NGUYỆN BAY LÊN -->
+        <div class="sky-lanterns-layer" id="skyLanternsLayer"></div>
+
+        <!-- 9. LỚP CANVAS HIỆU ỨNG KHÓI HƯƠNG, HOA SEN RƠI & SÓNG ÂM -->
+        <canvas id="templeCanvas"></canvas>
+
+        <!-- 10. THANH HUD GỌN GÀNG DƯỚI ĐÁY (GIỐNG MẪU THAM CHIẾU) -->
+        <footer class="bottom-hud-bar">
+          <!-- Bên trái: Thông báo hành lễ + 3 ô hướng dẫn tương tác -->
+          <div class="hud-left-col">
+            <div class="hud-active-notice" id="hudActiveNotice">
+              <span class="flower-bullet">💮</span>
+              <strong id="devoteeNameLine">Thí Chủ Minh Tâm</strong>
+              <span>—</span>
+              <span id="devoteeActionTag">Dâng hương cầu bình an</span>
+              <span class="flower-bullet">💮</span>
+            </div>
+
+            <div class="hud-gift-cards">
+              <div class="hud-gift-card" id="cardIncense" title="Bấm để Thắp hương">
+                <div class="gift-coin-tag">1 COIN / CMT</div>
+                <div class="gift-card-body">
+                  <span class="gift-emoji">🔥</span>
+                  <span class="gift-title">Dâng hương</span>
+                </div>
+              </div>
+
+              <div class="hud-gift-card" id="cardBlessing" title="Bấm để Cầu phúc & Thả hoa đăng">
+                <div class="gift-coin-tag">5 COINS / TIM</div>
+                <div class="gift-card-body">
+                  <span class="gift-emoji">🏮</span>
+                  <span class="gift-title">Cầu phúc</span>
+                </div>
+              </div>
+
+              <div class="hud-gift-card" id="cardLotus" title="Bấm để Dâng Hoa Sen Vàng">
+                <div class="gift-coin-tag">10+ COINS</div>
+                <div class="gift-card-body">
+                  <span class="gift-emoji">🪷</span>
+                  <span class="gift-title">Hoa sen</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bên phải: Bảng TẤM LÒNG THÀNH (Top Công Đức) -->
+          <div class="hud-right-leaderboard">
+            <div class="hud-lb-header">TẤM LÒNG THÀNH</div>
+            <div class="hud-lb-list" id="leaderboardList"></div>
+          </div>
+        </footer>
+
+        <!-- BANNER ĐẠI LỄ KIM LONG CHẦU PHẬT -->
+        <div class="grand-ceremony-banner" id="grandCeremonyBanner">
+          <div class="grand-title" id="grandTitle">🐉 ĐẠI LỄ KIM LONG CHẦU PHẬT 🐉</div>
+          <div class="grand-sub" id="grandSub">Công đức vô lượng: Đại Thí Chủ dâng lễ</div>
+        </div>
+
+        <!-- MODAL TỜ GIẢI QUẺ LINH XĂM -->
+        <div class="fortune-modal-overlay" id="fortuneModal">
+          <div class="fortune-scroll-card">
+            <div class="fortune-badge" id="fortuneRankBadge">THƯỢNG THƯỢNG CÁT</div>
+            <div class="fortune-heading" id="fortuneTitle">Quẻ Số 1 — Nhật Xuất Đông Phương</div>
+            <div class="fortune-devotee" id="fortuneDevotee">Thí chủ xin quẻ: Minh Tâm</div>
+            <div class="fortune-poem" id="fortunePoem"></div>
+            <div class="fortune-meaning" id="fortuneMeaning"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         BẢNG ĐIỀU KHIỂN NHANH RPC & GIẢ LẬP TRỰC TIẾP (ẨN KHI ?obs=1)
+         ==================================================================== -->
+    <aside class="quick-dock" id="quickDock">
+      <div class="dock-header">
+        <div class="dock-title">🎛️ Điều Khiển Live & RPC</div>
+        <a href="/admin" target="_blank" class="dock-link">Mở Admin Đầy Đủ ↗</a>
+      </div>
+
+      <div class="dock-section">
+        <div class="dock-section-title">🔊 Âm Thanh Chùa & Giọng Đọc Khấn</div>
+        <button class="dock-btn gold" id="btnUnlockAudio">
+          🔔 Bật Âm Thanh Chùa & Giọng Đọc
+        </button>
+        <div class="dock-grid-2">
+          <button class="dock-btn active-toggle" id="btnToggleTts">🎙️ Giọng Đọc: BẬT</button>
+          <button class="dock-btn active-toggle" id="btnToggleMusic">🎵 Nhạc Nền: BẬT</button>
+        </div>
+        <div class="volume-control-row">
+          <div class="volume-label-line">
+            <span>🎵 Âm lượng Nhạc nền</span>
+            <strong id="valMusicVol">65%</strong>
+          </div>
+          <input type="range" id="sliderMusicVol" class="volume-slider" min="0" max="100" value="65" />
+        </div>
+        <div class="volume-control-row">
+          <div class="volume-label-line">
+            <span>🎙️ Âm lượng Giọng đọc</span>
+            <strong id="valTtsVol">95%</strong>
+          </div>
+          <input type="range" id="sliderTtsVol" class="volume-slider" min="0" max="100" value="95" />
+        </div>
+      </div>
+
+      <div class="dock-section">
+        <div class="dock-section-title">📡 Kết Nối Phòng TikTok Live</div>
+        <div class="dock-input-row">
+          <input type="text" id="inputTikTokUser" class="dock-input" value="@zenfacts_vn" placeholder="Nhập @username hoặc link TikTok Live..." />
+          <button class="dock-btn gold" id="btnConnectTikTok">Kết Nối</button>
+        </div>
+        <button class="dock-btn" id="btnToggleAutoSim">
+          🤖 Tự động Giả lập Người Xem: TẮT
+        </button>
+      </div>
+
+      <div class="dock-section">
+        <div class="dock-section-title">🔴 Kết Nối Kênh YouTube Live</div>
+        <div class="dock-input-row">
+          <input type="text" id="inputYouTubeTarget" class="dock-input" value="@zenfacts_vn" placeholder="Nhập link Live, @kênh hoặc Video ID..." />
+          <button class="dock-btn gold" id="btnConnectYouTube">Kết Nối</button>
+        </div>
+      </div>
+
+      <div class="dock-section">
+        <div class="dock-section-title">🙏 Kích Hoạt Nghi Thức Tương Tác (RPC)</div>
+        <input type="text" id="inputDevoteeName" class="dock-input" value="Quỳnh_Finn" placeholder="Tên người xem / Thí chủ..." />
+        <input type="text" id="inputDevoteeWish" class="dock-input" value="Cầu cho gia đình bình an, tài lộc hanh thông, vạn sự như ý" placeholder="Lời cầu nguyện..." />
+
+        <div class="dock-grid-2">
+          <button class="dock-btn gold" id="btnRpcIncense">🔥 Thắp 3 Nén Hương</button>
+          <button class="dock-btn" id="btnRpcLantern">🏮 Thả Đèn Hoa Đăng</button>
+          <button class="dock-btn" id="btnRpcWoodenFish">🪵 Gõ Mõ (+5)</button>
+          <button class="dock-btn" id="btnRpcBell">🔔 Thỉnh Chuông Chùa</button>
+          <button class="dock-btn" id="btnRpcFortune">🎋 Xin Xăm / Gieo Quẻ</button>
+          <button class="dock-btn" id="btnRpcGiftLotus">🪷 Dâng Hoa Sen Vàng</button>
+        </div>
+        <button class="dock-btn gold" id="btnRpcGrandCeremony">
+          🐉 Đại Lễ Kim Long Chầu Phật (Quà Lớn)
+        </button>
+      </div>
+
+      <div class="dock-section">
+        <div class="dock-section-title">📜 Nhật Ký Tương Tác Gần Nhất</div>
+        <div class="event-feed" id="eventFeed"></div>
+      </div>
+    </aside>
+  </div>
+
+  <script src="/js/audio.js"></script>
+  <script src="/js/particles.js"></script>
+  <script src="/js/live.js"></script>
+</body>
+</html>

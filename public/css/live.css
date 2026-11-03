@@ -956,6 +956,116 @@ body.obs-mode .stage-wrapper {
   font-weight: 600;
 }
 
+/* BẢNG CĂN SỐ TỬ VI & PHẬT BẢN MỆNH */
+.horoscope-card {
+  width: 820px;
+  background: linear-gradient(180deg, #fff9ec 0%, #fae8c8 100%);
+  color: #2b0705;
+  border: 6px solid #8c1812;
+  outline: 3px solid var(--gold-main);
+  border-radius: 24px;
+  padding: 30px 36px;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+}
+
+.horoscope-badge {
+  display: inline-block;
+  background: #8c1812;
+  color: var(--gold-bright);
+  font-weight: 800;
+  font-size: 20px;
+  padding: 6px 24px;
+  border-radius: 999px;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 12px rgba(140, 24, 18, 0.35);
+}
+
+.horoscope-heading {
+  font-family: 'Noto Serif', serif;
+  font-size: 32px;
+  font-weight: 900;
+  color: #6b0f0a;
+  margin-bottom: 4px;
+}
+
+.horoscope-birthday {
+  font-size: 20px;
+  font-weight: 700;
+  color: #a8421e;
+  margin-bottom: 20px;
+}
+
+.horoscope-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.hs-item {
+  background: rgba(140, 24, 18, 0.06);
+  border: 1.5px solid rgba(140, 24, 18, 0.22);
+  border-radius: 14px;
+  padding: 12px 18px;
+}
+
+.hs-label {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #8c1812;
+  margin-bottom: 4px;
+}
+
+.hs-val {
+  font-size: 21px;
+  font-weight: 800;
+  color: #2b0705;
+  font-family: 'Noto Serif', serif;
+}
+
+.hs-val.hs-gold {
+  color: #b35900;
+}
+
+.hs-val.hs-red {
+  color: #8c1812;
+}
+
+.hs-sub {
+  font-size: 14.5px;
+  color: #5a251b;
+  margin-top: 3px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.horoscope-advice-box {
+  background: rgba(140, 24, 18, 0.09);
+  border: 2px dashed rgba(140, 24, 18, 0.35);
+  border-radius: 14px;
+  padding: 16px 20px;
+  text-align: left;
+}
+
+.hs-advice-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #8c1812;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.hs-advice-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2b0705;
+  line-height: 1.5;
+}
+
 .volume-control-row {
   display: flex;
   flex-direction: column;

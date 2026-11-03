@@ -178,19 +178,28 @@
       </section>
 
       <section class="card">
-        <h2>💬 3. Giả Lập Bình Luận / Icon Người Xem (TikTok & YouTube)</h2>
+        <h2>💬 3. Giả Lập Bình Luận / Ngày Sinh / Icon Người Xem (TikTok & YouTube)</h2>
         <div class="row">
-          <input type="text" id="simComment" value="🔥 Cầu cho gia đình mạnh khỏe bình an" placeholder="Nhập bình luận hoặc icon 🔥 🏮 🪷 🪵 🔔 🎋..." />
+          <input type="text" id="simComment" value="15/08/1995 xem căn số tử vi giúp em" placeholder="Nhập bình luận, ngày sinh (15/08/1995, 12-05-98) hoặc icon 🔥 🏮 🪷..." />
           <button class="btn gold" id="btnSendComment">Gửi Comment</button>
         </div>
-        <p style="font-size: 13px; color: var(--muted); line-height: 1.6;">
-          <strong>Nhận diện Icon & Từ khóa:</strong><br/>
-          • 🔥/🕯️/🙏: Thắp hương & vái lạy<br/>
-          • 🏮/✨/⭐: Thả đèn hoa đăng<br/>
-          • 🪷/🌸/💐: Dâng hoa sen cúng Phật<br/>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;">
+          <button class="btn" type="button" onclick="setAndSendComment('15/08/1995 xem căn số tử vi')">☸ Sinh 15/08/1995</button>
+          <button class="btn" type="button" onclick="setAndSendComment('12-05-1998 xem bản mệnh')">☸ Sinh 12-05-1998</button>
+          <button class="btn" type="button" onclick="setAndSendComment('20/11/2002')">☸ Sinh 20/11/2002</button>
+          <button class="btn" type="button" onclick="setAndSendComment('🔥 Thắp hương cầu bình an')">🔥 Thắp Hương</button>
+          <button class="btn" type="button" onclick="setAndSendComment('🏮 Thả hoa đăng cầu phúc')">🏮 Thả Hoa Đăng</button>
+          <button class="btn" type="button" onclick="setAndSendComment('🎋 Xin một quẻ xăm đầu tháng')">🎋 Gieo Quẻ</button>
+        </div>
+        <p style="font-size: 13px; color: var(--muted); line-height: 1.6; margin-top: 12px;">
+          <strong>Nhận diện Tự Động:</strong><br/>
+          • <strong>Ngày sinh (dd/mm/yyyy, dd-mm-yy, dd.mm.yyyy)</strong>: Tự động tra cứu <strong>Căn Số Tử Vi, Can Chi, Mệnh Ngũ Hành Nạp Âm, Phật Bản Mệnh & Số Chủ Đạo</strong>.<br/>
+          • 🔥/🕯️/🙏: Thắp hương & vái lạy Phật<br/>
+          • 🏮/✨/⭐: Thả đèn hoa đăng cầu an<br/>
+          • 🪷/🌸/💐: Dâng hoa sen vàng cúng dường<br/>
           • 🪵/🥁: Gõ mõ tụng kinh (+công đức)<br/>
-          • 🔔/🛎️: Thỉnh chuông chùa<br/>
-          • 🎋/📜: Xin xăm / gieo quẻ
+          • 🔔/🛎️: Thỉnh Đại Hồng Chung<br/>
+          • 🎋/📜: Xin xăm / gieo quẻ cát hung
         </p>
       </section>
 
@@ -237,6 +246,10 @@
       const comment = document.getElementById('simComment').value.trim();
       sendRpc('temple.comment', { comment });
     };
+    function setAndSendComment(text) {
+      document.getElementById('simComment').value = text;
+      sendRpc('temple.comment', { comment: text });
+    }
     document.getElementById('btnSpeakMaiChi').onclick = async () => {
       const text = document.getElementById('ttsDirectText').value.trim();
       const data = await sendRpc('temple.speak', { text, voice: 'maichi', broadcast: true });

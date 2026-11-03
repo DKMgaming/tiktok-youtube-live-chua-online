@@ -509,6 +509,8 @@
         return `${badge}🪷 <strong>${escapeHtml(ev.user)}</strong> dâng <em>${escapeHtml(ev.giftName)}</em> (+${ev.merit} CĐ)`;
       case 'drawFortune':
         return `${badge}🎋 <strong>${escapeHtml(ev.user)}</strong> gieo được Quẻ số ${ev.fortune?.number} (${ev.fortune?.rank})`;
+      case 'readHoroscope':
+        return `${badge}☸ <strong>${escapeHtml(ev.user)}</strong> xem căn số tử vi: ${escapeHtml(ev.horoscope?.canChi)} (Mệnh ${escapeHtml(ev.horoscope?.napAm)})`;
       default:
         return `${badge}✨ <strong>${escapeHtml(ev.user || 'Thí chủ')}</strong> tương tác`;
     }
@@ -516,12 +518,13 @@
 
   // 7. Xử lý hiệu ứng khi có Nghi Thức mới
   let fortuneTimer = null;
+  let horoscopeTimer = null;
   let grandTimer = null;
 
   function triggerRitualVisuals(ev) {
     if (!ev) return;
 
-    if (ev.ttsText && ev.type !== 'drawFortune') {
+    if (ev.ttsText && ev.type !== 'drawFortune' && ev.type !== 'readHoroscope') {
       audio.enqueueTts(ev.ttsText, { voice: ev.ttsVoice || 'maichi' });
     }
 
@@ -609,6 +612,38 @@
         });
         break;
       }
+
+      case 'readHoroscope': {
+        audio.playIncenseChime();
+        updateCentralWorshipper(
+          ev.user,
+          ev.avatar,
+          `☸ Xem Căn Số Tử Vi...`,
+          `Thí chủ ${ev.user} đang xem căn số bản mệnh (${ev.horoscope?.birthDateStr})...`,
+          false
+        );
+        audio.enqueueTts(ev.ttsText || '', {
+          voice: ev.ttsVoice || 'maichi',
+          onStart: () => {
+            audio.playTempleBell(0.85);
+            showHoroscopeModal(ev.user, ev.horoscope);
+            updateCentralWorshipper(
+              ev.user,
+              ev.avatar,
+              `☸ ${ev.horoscope?.canChi} • Mệnh ${ev.horoscope?.element}`,
+              ev.horoscope?.summaryShort || '',
+              true
+            );
+          },
+          onEnd: () => {
+            clearTimeout(horoscopeTimer);
+            horoscopeTimer = setTimeout(() => {
+              document.getElementById('horoscopeModal')?.classList.remove('visible');
+            }, 2000);
+          }
+        });
+        break;
+      }
     }
   }
 
@@ -647,6 +682,32 @@
 
   document.getElementById('fortuneModal')?.addEventListener('click', () => {
     document.getElementById('fortuneModal').classList.remove('visible');
+  });
+
+  function showHoroscopeModal(user, horoscope) {
+    if (!horoscope) return;
+    const modal = document.getElementById('horoscopeModal');
+    if (!modal) return;
+    document.getElementById('hsDevotee').textContent = `Thí chủ: ${user}`;
+    document.getElementById('hsBirthday').textContent = `Sinh ngày: ${horoscope.birthDateStr}`;
+    document.getElementById('hsCanChi').textContent = horoscope.canChi;
+    document.getElementById('hsNapAm').textContent = `${horoscope.napAm} (${horoscope.element})`;
+    document.getElementById('hsNapAmDesc').textContent = horoscope.napAmDesc;
+    document.getElementById('hsBuddha').textContent = horoscope.phatBanMenh;
+    document.getElementById('hsBuddhaBlessing').textContent = horoscope.phatBanMenhBlessing;
+    document.getElementById('hsLifePath').textContent = `Số ${horoscope.lifePathNumber} — ${horoscope.lifePathTitle}`;
+    document.getElementById('hsLifePathTrait').textContent = horoscope.lifePathTrait;
+    document.getElementById('hsAdvice').textContent = horoscope.dharmaAdvice;
+
+    modal.classList.add('visible');
+    clearTimeout(horoscopeTimer);
+    horoscopeTimer = setTimeout(() => {
+      modal.classList.remove('visible');
+    }, 18000);
+  }
+
+  document.getElementById('horoscopeModal')?.addEventListener('click', () => {
+    document.getElementById('horoscopeModal').classList.remove('visible');
   });
 
   function showGrandCeremonyBanner(user, giftName, merit) {

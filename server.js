@@ -102,6 +102,201 @@ const FORTUNE_DECK = [
 ];
 
 // ============================================================================
+// 1.1 HỆ THỐNG TRA CỨU CĂN SỐ TỬ VI & PHẬT BẢN MỆNH (THEO NGÀY THÁNG NĂM SINH)
+// ============================================================================
+const CAN_NAMES = ['Canh', 'Tân', 'Nhâm', 'Quý', 'Giáp', 'Ất', 'Bính', 'Đinh', 'Mậu', 'Kỷ'];
+const CHI_NAMES = ['Tý', 'Sửu', 'Dần', 'Mão', 'Thìn', 'Tỵ', 'Ngọ', 'Mùi', 'Thân', 'Dậu', 'Tuất', 'Hợi'];
+
+// Bảng 60 Lục Thập Hoa Giáp Nạp Âm Ngũ Hành chính xác theo cổ thư
+const NAP_AM_60 = [
+  { name: 'Hải Trung Kim', element: 'Kim', desc: 'Vàng trong lòng biển cả sâu thẳm' },
+  { name: 'Hải Trung Kim', element: 'Kim', desc: 'Vàng trong lòng biển cả sâu thẳm' },
+  { name: 'Lư Trung Hỏa', element: 'Hỏa', desc: 'Lửa cháy trong lò luyện kim' },
+  { name: 'Lư Trung Hỏa', element: 'Hỏa', desc: 'Lửa cháy trong lò luyện kim' },
+  { name: 'Đại Lâm Mộc', element: 'Mộc', desc: 'Cây rừng lớn tỏa bóng che chở vạn vật' },
+  { name: 'Đại Lâm Mộc', element: 'Mộc', desc: 'Cây rừng lớn tỏa bóng che chở vạn vật' },
+  { name: 'Lộ Bàng Thổ', element: 'Thổ', desc: 'Đất ven đường bền bỉ nâng bước nhân gian' },
+  { name: 'Lộ Bàng Thổ', element: 'Thổ', desc: 'Đất ven đường bền bỉ nâng bước nhân gian' },
+  { name: 'Kiếm Phong Kim', element: 'Kim', desc: 'Vàng mũi kiếm sắc bén kiên định' },
+  { name: 'Kiếm Phong Kim', element: 'Kim', desc: 'Vàng mũi kiếm sắc bén kiên định' },
+  { name: 'Sơn Đầu Hỏa', element: 'Hỏa', desc: 'Lửa trên đỉnh núi rực sáng quang minh' },
+  { name: 'Sơn Đầu Hỏa', element: 'Hỏa', desc: 'Lửa trên đỉnh núi rực sáng quang minh' },
+  { name: 'Giản Hạ Thủy', element: 'Thủy', desc: 'Nước mát dưới khe suối trong lành mát rượi' },
+  { name: 'Giản Hạ Thủy', element: 'Thủy', desc: 'Nước mát dưới khe suối trong lành mát rượi' },
+  { name: 'Thành Đầu Thổ', element: 'Thổ', desc: 'Đất trên mặt thành kiên cố che chắn gió mưa' },
+  { name: 'Thành Đầu Thổ', element: 'Thổ', desc: 'Đất trên mặt thành kiên cố che chắn gió mưa' },
+  { name: 'Bạch Lạp Kim', element: 'Kim', desc: 'Vàng sáp tinh khiết trong chân đèn lưu ly' },
+  { name: 'Bạch Lạp Kim', element: 'Kim', desc: 'Vàng sáp tinh khiết trong chân đèn lưu ly' },
+  { name: 'Dương Liễu Mộc', element: 'Mộc', desc: 'Gỗ cây dương liễu mềm mại uyển chuyển' },
+  { name: 'Dương Liễu Mộc', element: 'Mộc', desc: 'Gỗ cây dương liễu mềm mại uyển chuyển' },
+  { name: 'Tuyền Trung Thủy', element: 'Thủy', desc: 'Nước suối nguồn tinh khôi mát lành' },
+  { name: 'Tuyền Trung Thủy', element: 'Thủy', desc: 'Nước suối nguồn tinh khôi mát lành' },
+  { name: 'Ốc Thượng Thổ', element: 'Thổ', desc: 'Ngói đất trên mái nhà che chắn bão giông' },
+  { name: 'Ốc Thượng Thổ', element: 'Thổ', desc: 'Ngói đất trên mái nhà che chắn bão giông' },
+  { name: 'Tích Lịch Hỏa', element: 'Hỏa', desc: 'Lửa sấm sét chớp giật uy lực phi thường' },
+  { name: 'Tích Lịch Hỏa', element: 'Hỏa', desc: 'Lửa sấm sét chớp giật uy lực phi thường' },
+  { name: 'Tùng Bách Mộc', element: 'Mộc', desc: 'Gỗ tùng bách xanh tươi bốn mùa ngạo tuyết sương' },
+  { name: 'Tùng Bách Mộc', element: 'Mộc', desc: 'Gỗ tùng bách xanh tươi bốn mùa ngạo tuyết sương' },
+  { name: 'Trường Lưu Thủy', element: 'Thủy', desc: 'Dòng sông dài cuộn chảy nghìn dặm ra biển' },
+  { name: 'Trường Lưu Thủy', element: 'Thủy', desc: 'Dòng sông dài cuộn chảy nghìn dặm ra biển' },
+  { name: 'Sa Trung Kim', element: 'Kim', desc: 'Vàng quý lấp lánh trong cát bồi phù sa' },
+  { name: 'Sa Trung Kim', element: 'Kim', desc: 'Vàng quý lấp lánh trong cát bồi phù sa' },
+  { name: 'Sơn Hạ Hỏa', element: 'Hỏa', desc: 'Lửa ấm dưới chân núi sưởi ấm làng quê' },
+  { name: 'Sơn Hạ Hỏa', element: 'Hỏa', desc: 'Lửa ấm dưới chân núi sưởi ấm làng quê' },
+  { name: 'Bình Địa Mộc', element: 'Mộc', desc: 'Cây cỏ nơi đồng bằng mơn mởn sinh sôi' },
+  { name: 'Bình Địa Mộc', element: 'Mộc', desc: 'Cây cỏ nơi đồng bằng mơn mởn sinh sôi' },
+  { name: 'Bích Thượng Thổ', element: 'Thổ', desc: 'Đất vách tường nhà bình yên che chở' },
+  { name: 'Bích Thượng Thổ', element: 'Thổ', desc: 'Đất vách tường nhà bình yên che chở' },
+  { name: 'Kim Bạch Kim', element: 'Kim', desc: 'Vàng nén pha bạc tôn quý thanh cao' },
+  { name: 'Kim Bạch Kim', element: 'Kim', desc: 'Vàng nén pha bạc tôn quý thanh cao' },
+  { name: 'Phúc Đăng Hỏa', element: 'Hỏa', desc: 'Lửa ngọn hoa đăng soi đường đêm tối' },
+  { name: 'Phúc Đăng Hỏa', element: 'Hỏa', desc: 'Lửa ngọn hoa đăng soi đường đêm tối' },
+  { name: 'Thiên Hà Thủy', element: 'Thủy', desc: 'Nước mưa trên trời tưới mát nhân gian' },
+  { name: 'Thiên Hà Thủy', element: 'Thủy', desc: 'Nước mưa trên trời tưới mát nhân gian' },
+  { name: 'Đại Trạch Thổ', element: 'Thổ', desc: 'Đất đầm lầy màu mỡ dung dưỡng vạn vật' },
+  { name: 'Đại Trạch Thổ', element: 'Thổ', desc: 'Đất đầm lầy màu mỡ dung dưỡng vạn vật' },
+  { name: 'Thoa Xuyến Kim', element: 'Kim', desc: 'Vàng trang sức trâm ngọc quý phái' },
+  { name: 'Thoa Xuyến Kim', element: 'Kim', desc: 'Vàng trang sức trâm ngọc quý phái' },
+  { name: 'Tang Đố Mộc', element: 'Mộc', desc: 'Gỗ cây dâu tằm dệt nên gấm vóc lụa là' },
+  { name: 'Tang Đố Mộc', element: 'Mộc', desc: 'Gỗ cây dâu tằm dệt nên gấm vóc lụa là' },
+  { name: 'Đại Khê Thủy', element: 'Thủy', desc: 'Nước khe suối lớn ngút ngàn dào dạt' },
+  { name: 'Đại Khê Thủy', element: 'Thủy', desc: 'Nước khe suối lớn ngút ngàn dào dạt' },
+  { name: 'Sa Trung Thổ', element: 'Thổ', desc: 'Đất phù sa bồi đắp mùa màng tốt tươi' },
+  { name: 'Sa Trung Thổ', element: 'Thổ', desc: 'Đất phù sa bồi đắp mùa màng tốt tươi' },
+  { name: 'Thiên Thượng Hỏa', element: 'Hỏa', desc: 'Lửa mặt trời quang minh soi rọi vạn loài' },
+  { name: 'Thiên Thượng Hỏa', element: 'Hỏa', desc: 'Lửa mặt trời quang minh soi rọi vạn loài' },
+  { name: 'Thạch Lựu Mộc', element: 'Mộc', desc: 'Cây thạch lựu trên đá kiên cường trổ hoa thơm' },
+  { name: 'Thạch Lựu Mộc', element: 'Mộc', desc: 'Cây thạch lựu trên đá kiên cường trổ hoa thơm' },
+  { name: 'Đại Hải Thủy', element: 'Thủy', desc: 'Nước biển lớn mênh mông sâu thẳm bao la' },
+  { name: 'Đại Hải Thủy', element: 'Thủy', desc: 'Nước biển lớn mênh mông sâu thẳm bao la' }
+];
+
+// 8 Vị Phật Bản Mệnh hộ trì 12 Con Giáp
+const BUDDHA_PATRONS = [
+  { animal: 'Tý', buddha: 'Đức Phật Thiên Thủ Thiên Nhãn', blessing: 'Đại Từ Đại Bi cứu khổ nạn, phù hộ bình an tiêu trừ tai ương' },
+  { animal: 'Sửu', buddha: 'Bồ Tát Hư Không Tạng', blessing: 'Trí tuệ vô lượng, tâm trí sáng suốt, tài lộc dồi dào' },
+  { animal: 'Dần', buddha: 'Bồ Tát Hư Không Tạng', blessing: 'Đại trí đại dũng, vượt qua thử thách, công danh hanh thông' },
+  { animal: 'Mão', buddha: 'Bồ Tát Văn Thù Sư Lợi', blessing: 'Trí tuệ viên mãn, học vấn đỗ đạt, khai mở hanh thông' },
+  { animal: 'Thìn', buddha: 'Bồ Tát Phổ Hiền', blessing: 'Đức hạnh viên dung, phúc thọ tăng trưởng, quý nhân trợ mệnh' },
+  { animal: 'Tỵ', buddha: 'Bồ Tát Phổ Hiền', blessing: 'Thân tâm an lạc, tiêu trừ tà khí, tài lộc vẹn toàn' },
+  { animal: 'Ngọ', buddha: 'Bồ Tát Đại Thế Chí', blessing: 'Ánh sáng trí huệ, soi đường chỉ lối, trừ khử muộn phiền' },
+  { animal: 'Mùi', buddha: 'Đức Phật Như Lai Đại Nhật', blessing: 'Quang minh trí huệ phổ chiếu, thành tựu đại nghiệp' },
+  { animal: 'Thân', buddha: 'Đức Phật Như Lai Đại Nhật', blessing: 'Linh hoạt mẫn tiệp, cát tinh phù trợ, vạn sự thuận hòa' },
+  { animal: 'Dậu', buddha: 'Bất Động Minh Vương', blessing: 'Hộ pháp uy dũng, kiên định trừ ma, hóa giải thị phi' },
+  { animal: 'Tuất', buddha: 'Đức Phật A Di Đà', blessing: 'Tiếp dẫn quang minh thanh tịnh, thọ mạng dài lâu, an vui phước lạc' },
+  { animal: 'Hợi', buddha: 'Đức Phật A Di Đà', blessing: 'Phúc lộc tràn đầy, gia đạo êm ấm, tai qua nạn khỏi' }
+];
+
+// Ý nghĩa Căn Số Chủ Đạo (Thần Số Học Phật Duyên)
+const LIFE_PATH_DATA = {
+  2: { title: 'Tâm Thiện Duyên Lành', trait: 'Trực giác nhạy bén, sống nghĩa tình hòa ái, có căn duyên Phật pháp sâu dày' },
+  3: { title: 'Trí Tuệ Hướng Dương', trait: 'Tư duy sáng suốt, hoạt ngôn vui tươi, luôn lan tỏa năng lượng an lành' },
+  4: { title: 'Chân Thật Bền Vững', trait: 'Cẩn trọng thực tế, bền bỉ kiên trì, hậu vận vững vàng như núi thái' },
+  5: { title: 'Tự Tại Tiên Phong', trait: 'Tâm hồn khoáng đạt, yêu tự do, thích nghi linh hoạt tự tại trước sóng gió' },
+  6: { title: 'Nhân Ái Bao Dung', trait: 'Giàu lòng trắc ẩn, chăm lo gia đình chu toàn, sống vì người khác' },
+  7: { title: 'Giác Ngộ Uyên Bác', trait: 'Có chiều sâu tâm thức, tôi luyện qua gian khó để đắc trí tuệ giác ngộ' },
+  8: { title: 'Tài Lộc Khí Phách', trait: 'Ý chí kiên cường, bản lĩnh độc lập, tài chính hanh thông khởi sắc' },
+  9: { title: 'Phụng Sự Đại Nghĩa', trait: 'Đại lượng bao dung, giàu lòng vị tha, mang tâm nguyện phụng sự cộng đồng' },
+  10: { title: 'Quang Minh Tự Chủ', trait: 'Tự tin quảng giao, khí chất tiên phong, dễ gặt hái thành tựu lớn' },
+  11: { title: 'Linh Tuệ Khai Sáng', trait: 'Trực giác tâm linh sáng tỏ, tâm từ bi hướng thiện, có duyên lành Phật độ' },
+  22: { title: 'Kiến Tạo Đại Nghiệp', trait: 'Chí lớn bền gan, năng lực biến ước mơ thành hiện thực, tạo phước báu lợi lạc' }
+};
+
+// Lời khuyên tu tâm theo Ngũ Hành Nạp Âm
+const DHARMA_ADVICE = {
+  Kim: 'Bản tính cương trực khí khái, nên giữ lòng mềm mỏng từ ái, năng phóng sinh tích đức để phúc trạch dài lâu.',
+  Mộc: 'Bản tính thiện lương nhân ái; nên giữ tâm khiêm cung, hiếu thuận mẹ cha, tích phước thì hoa thơm trái ngọt tự đến.',
+  Thủy: 'Trí tuệ uyển chuyển bao dung; nên giữ tâm tĩnh tại thanh tịnh, siêng năng làm việc thiện thì dữ hóa lành.',
+  Hỏa: 'Nhiệt huyết quang minh kiên định; nên rèn tính nhẫn nại, hòa nhã yêu thương, tâm an định thì phúc lộc tràn đầy.',
+  Thổ: 'Vững vàng trung hậu đáng tin; nên rộng mở tâm từ bi giúp đỡ người cơ nhỡ, hậu vận an khang thịnh vượng.'
+};
+
+function calculateLifePath(d, m, y) {
+  const digits = String(d) + String(m) + String(y);
+  let sum = digits.split('').reduce((acc, c) => acc + parseInt(c, 10), 0);
+  while (sum > 11 && sum !== 22) {
+    const nextSum = String(sum).split('').reduce((acc, c) => acc + parseInt(c, 10), 0);
+    if (sum === nextSum) break;
+    sum = nextSum;
+  }
+  return sum;
+}
+
+function calculateHoroscope(day, month, year, gender, devoteeName) {
+  const can = CAN_NAMES[year % 10];
+  const chiIdx = ((year - 4) % 12 + 12) % 12;
+  const chi = CHI_NAMES[chiIdx];
+  const canChi = `${can} ${chi}`;
+
+  const hoaGiapIdx = ((year - 4) % 60 + 60) % 60;
+  const napAmObj = NAP_AM_60[hoaGiapIdx];
+
+  const patronObj = BUDDHA_PATRONS[chiIdx];
+  const lifePathNum = calculateLifePath(day, month, year);
+  const lifePathObj = LIFE_PATH_DATA[lifePathNum] || LIFE_PATH_DATA[10];
+
+  const advice = DHARMA_ADVICE[napAmObj.element] || DHARMA_ADVICE.Thủy;
+  const birthDateStr = `${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
+
+  const summaryShort = `Tuổi ${canChi} • Mệnh ${napAmObj.name} • ${patronObj.buddha} hộ mệnh • Số ${lifePathNum}`;
+
+  const ttsText = `Thí chủ ${formatDevoteeNameForTts(devoteeName)}, sinh ngày ${day} tháng ${month} năm ${year}. Tuổi ${canChi}, bản mệnh ${napAmObj.name}, hành ${napAmObj.element}. Phật bản mệnh là ${patronObj.buddha} gia hộ. Số căn mệnh là số ${lifePathNum}, ${lifePathObj.title}. ${lifePathObj.trait}. Lời khuyên tu tâm: ${advice} Nam Mô A Di Đà Phật.`;
+
+  return {
+    birthDateStr,
+    day,
+    month,
+    year,
+    canChi,
+    can,
+    chi,
+    napAm: napAmObj.name,
+    element: napAmObj.element,
+    napAmDesc: napAmObj.desc,
+    phatBanMenh: patronObj.buddha,
+    phatBanMenhBlessing: patronObj.blessing,
+    lifePathNumber: lifePathNum,
+    lifePathTitle: lifePathObj.title,
+    lifePathTrait: lifePathObj.trait,
+    dharmaAdvice: advice,
+    summaryShort,
+    ttsText
+  };
+}
+
+function extractBirthDate(rawText) {
+  if (!rawText) return null;
+  const s = String(rawText).trim();
+
+  // Bắt các mẫu ngày tháng năm: dd/mm/yyyy, dd-mm-yyyy, dd.mm.yyyy, dd/mm/yy, dd-mm-yy
+  const match = s.match(/(?:^|[^\d])(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})(?:[^\d]|$)/);
+  if (!match) return null;
+
+  let day = parseInt(match[1], 10);
+  let month = parseInt(match[2], 10);
+  let year = parseInt(match[3], 10);
+
+  // Xử lý năm 2 chữ số (ví dụ: 95 -> 1995, 03 -> 2003)
+  if (year < 100) {
+    year = year <= 35 ? 2000 + year : 1900 + year;
+  }
+
+  if (month < 1 || month > 12) return null;
+  if (day < 1 || day > 31) return null;
+  if (year < 1920 || year > 2030) return null;
+
+  const daysInMonth = new Date(year, month, 0).getDate();
+  if (day > daysInMonth) return null;
+
+  let gender = 'devotee';
+  const lower = s.toLowerCase();
+  if (/\b(nam|trai|anh|chú)\b/i.test(lower)) gender = 'nam';
+  else if (/\b(nữ|nu|gái|chị|cô)\b/i.test(lower)) gender = 'nu';
+
+  return { day, month, year, gender, rawMatch: match[0].trim() };
+}
+
+// ============================================================================
 // 2. ZEROTTS PYTHON WORKER MANAGER (VOICE: MAI CHI)
 // ============================================================================
 class ZeroTTSManager {
@@ -700,6 +895,41 @@ const Rituals = {
     return { event, state: getPublicState() };
   },
 
+  readHoroscope(params = {}) {
+    const user = sanitizeUserName(params.user);
+    const uniqueId = params.uniqueId || '';
+    const avatar = params.avatar || '';
+    const bDate = params.birthDate;
+    if (!bDate || !bDate.day || !bDate.month || !bDate.year) {
+      return null;
+    }
+    const horoscope = calculateHoroscope(bDate.day, bDate.month, bDate.year, bDate.gender, user);
+    const merit = 15;
+
+    state.totalIncense += 1;
+    const devotee = recordDevotee(user, uniqueId, avatar, merit, 1, 0, `Xem căn số: ${horoscope.canChi} (${horoscope.birthDateStr})`);
+
+    const ttsText = params.readTts === false
+      ? ''
+      : cleanTtsText(horoscope.ttsText);
+
+    const event = pushEventLog({
+      type: 'readHoroscope',
+      user: devotee.name,
+      uniqueId: devotee.uniqueId,
+      avatar: devotee.avatar,
+      horoscope,
+      merit,
+      ttsText,
+      ttsVoice: state.settings.ttsVoice || 'maichi',
+      platform: params.platform || 'tiktok'
+    });
+
+    saveState();
+    broadcastNotification('temple.event', { event, state: getPublicState() });
+    return { event, state: getPublicState() };
+  },
+
   grandCeremony(params = {}) {
     return this.offerGift({
       ...params,
@@ -762,7 +992,10 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
     return null;
   }
 
-  // 1. Nhận diện nghi thức theo Icon / Emoji đặc biệt (rất phổ biến trên YouTube Live)
+  // 1. Nhận diện ngày tháng năm sinh để xem căn số tử vi (dd/mm/yyyy, dd-mm-yy...)
+  const birthDate = extractBirthDate(raw);
+
+  // 2. Nhận diện nghi thức theo Icon / Emoji đặc biệt (rất phổ biến trên YouTube Live)
   const isEmojiFortune = EMOJI_RITUAL_PATTERNS.fortune.test(raw);
   const isEmojiBell = EMOJI_RITUAL_PATTERNS.bell.test(raw);
   const isEmojiWoodenFish = EMOJI_RITUAL_PATTERNS.woodenFish.test(raw);
@@ -770,12 +1003,13 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
   const isEmojiLantern = EMOJI_RITUAL_PATTERNS.lantern.test(raw);
   const isEmojiIncense = EMOJI_RITUAL_PATTERNS.incense.test(raw);
   const hasSpecialEmoji = isEmojiFortune || isEmojiBell || isEmojiWoodenFish || isEmojiLotus || isEmojiLantern || isEmojiIncense;
+  const hasSpecialIntent = Boolean(birthDate || hasSpecialEmoji);
 
   // Lọc lời khấn dạng chữ nếu có
   const cleanWish = sanitizeWishText(raw);
 
-  // Nếu không có icon đặc biệt VÀ cũng không có lời khấn chữ hợp lệ (ít hơn 3 ký tự) -> bỏ qua
-  if (!hasSpecialEmoji && (!cleanWish || cleanWish.length < 3)) {
+  // Nếu không có căn số ngày sinh / icon đặc biệt VÀ cũng không có lời khấn chữ hợp lệ (ít hơn 3 ký tự) -> bỏ qua
+  if (!hasSpecialIntent && (!cleanWish || cleanWish.length < 3)) {
     return null;
   }
 
@@ -797,7 +1031,18 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
   const cleanUser = sanitizeUserName(user);
   const lower = (cleanWish || raw).toLowerCase();
 
-  // 1. Xin xăm / Gieo quẻ (Icon: 🎋, 🎍, 📜 hoặc từ khóa)
+  // 1. ƯU TIÊN ĐỌC CĂN SỐ TỬ VI BẢN MỆNH KHI COMMENT CÓ NGÀY THÁNG NĂM SINH
+  if (birthDate) {
+    return Rituals.readHoroscope({
+      user: cleanUser,
+      uniqueId,
+      avatar,
+      birthDate,
+      platform
+    });
+  }
+
+  // 2. Xin xăm / Gieo quẻ (Icon: 🎋, 🎍, 📜 hoặc từ khóa)
   if (
     isEmojiFortune ||
     lower.includes('xin xăm') ||
@@ -1335,6 +1580,8 @@ async function handleRpcCall(method, params = {}) {
       return Rituals.offerGift(params);
     case 'temple.drawFortune':
       return Rituals.drawFortune(params);
+    case 'temple.readHoroscope':
+      return Rituals.readHoroscope(params);
     case 'temple.grandCeremony':
       return Rituals.grandCeremony(params);
     case 'temple.updateSettings':

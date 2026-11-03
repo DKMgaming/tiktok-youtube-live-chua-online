@@ -12,6 +12,21 @@ Người xem trên **TikTok Live** và **YouTube Live** tương tác trực ti�
 
 ---
 
+## 🎯 Bảng Phím Tắt Icon / Emoji Tương Tác Nhanh (TikTok & YouTube Live)
+
+Người xem trên TikTok Live hoặc YouTube Live có thể gửi nhanh các **Icon/Emoji** (gửi riêng lẻ hoặc kèm lời cầu chúc) để hệ thống tự động kích hoạt nghi thức:
+
+| Nghi thức | Icon nhận diện | Mã Emoji YouTube | Hiệu ứng kích hoạt |
+| :--- | :--- | :--- | :--- |
+| **🔥 Thắp hương & Bái Phật** | `🔥` `🕯️` `🪔` `♨️` `🙏` | `:fire:` `:candle:` `:pray:` | Thí chủ bước lên thảm đỏ, thắp nhang và cúi lạy Tam bái trước Đức Phật A Di Đà |
+| **🏮 Thả đèn hoa đăng** | `🏮` `✨` `⭐` `🌟` `🎆` | `:lantern:` `:sparkles:` `:star:` | Đèn hoa đăng bay lên trời mang lời cầu nguyện quốc thái dân an |
+| **🪷 Dâng hoa sen cúng Phật** | `🪷` `🌺` `🌸` `💐` `🌼` `💮` | `:lotus:` `:flower:` `:blossom:` | Dâng đài sen vàng cúng dường Tam Bảo, tăng điểm Công Đức |
+| **🪵 Gõ mõ tụng kinh** | `🪵` `🔨` `🥁` | `:wood:` `:drum:` | Tiếng mõ vang lên 3 nhịp giòn giã kèm sóng âm nhẹ |
+| **🔔 Thỉnh Đại Hồng Chung** | `🔔` `🛎️` | `:bell:` | Chuông chùa ngân vang, sóng âm vàng lan tỏa khắp 40 Phật tử |
+| **🎋 Xin xăm / Gieo quẻ** | `🎋` `🎍` `📜` | `:bamboo:` `:scroll:` | Lắc ống xăm tre và mở Tờ Giải Quẻ cát tường đồng bộ giọng đọc ZeroTTS |
+
+---
+
 ## 📸 Hình Ảnh Demo Giao Diện
 
 ### 1. Màn hình Chánh Điện 9:16 & Bảng Điều Khiển Nhanh (`http://localhost:3000`)

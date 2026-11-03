@@ -744,7 +744,15 @@ const Rituals = {
 // ============================================================================
 let tiktokConn = null;
 
-const commentCooldownMap = new Map();
+// Bộ nhận diện Icon / Emoji đặc biệt (hỗ trợ cả Unicode và mã YouTube/TikTok Emoji)
+const EMOJI_RITUAL_PATTERNS = {
+  fortune: /(?:🎋|🎍|📜|:bamboo:|:tanabata_tree:|:scroll:)/u,
+  bell: /(?:🔔|🛎️|:bell:)/u,
+  woodenFish: /(?:🪵|🔨|🥁|:wood:|:drum:)/u,
+  lotus: /(?:🪷|🌺|🌸|💐|🌼|💮|🏵️|:lotus:|:flower:|:blossom:|:cherry_blossom:)/u,
+  lantern: /(?:🏮|✨|⭐|🌟|🎆|:lantern:|:sparkles:|:star:)/u,
+  incense: /(?:🔥|🕯️|🪔|♨️|🙏|:fire:|:candle:|:pray:|:folded_hands:)/u
+};
 
 function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tiktok') {
   const raw = String(commentText || '').trim();
@@ -752,8 +760,20 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
     return null;
   }
 
+  // 1. Nhận diện nghi thức theo Icon / Emoji đặc biệt (rất phổ biến trên YouTube Live)
+  const isEmojiFortune = EMOJI_RITUAL_PATTERNS.fortune.test(raw);
+  const isEmojiBell = EMOJI_RITUAL_PATTERNS.bell.test(raw);
+  const isEmojiWoodenFish = EMOJI_RITUAL_PATTERNS.woodenFish.test(raw);
+  const isEmojiLotus = EMOJI_RITUAL_PATTERNS.lotus.test(raw);
+  const isEmojiLantern = EMOJI_RITUAL_PATTERNS.lantern.test(raw);
+  const isEmojiIncense = EMOJI_RITUAL_PATTERNS.incense.test(raw);
+  const hasSpecialEmoji = isEmojiFortune || isEmojiBell || isEmojiWoodenFish || isEmojiLotus || isEmojiLantern || isEmojiIncense;
+
+  // Lọc lời khấn dạng chữ nếu có
   const cleanWish = sanitizeWishText(raw);
-  if (!cleanWish || cleanWish.length < 3) {
+
+  // Nếu không có icon đặc biệt VÀ cũng không có lời khấn chữ hợp lệ (ít hơn 3 ký tự) -> bỏ qua
+  if (!hasSpecialEmoji && (!cleanWish || cleanWish.length < 3)) {
     return null;
   }
 
@@ -773,10 +793,11 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
   }
 
   const cleanUser = sanitizeUserName(user);
-  const lower = cleanWish.toLowerCase();
+  const lower = (cleanWish || raw).toLowerCase();
 
-  // 1. Xin xăm / Gieo quẻ
+  // 1. Xin xăm / Gieo quẻ (Icon: 🎋, 🎍, 📜 hoặc từ khóa)
   if (
+    isEmojiFortune ||
     lower.includes('xin xăm') ||
     lower.includes('xin xam') ||
     lower.includes('gieo quẻ') ||
@@ -786,35 +807,59 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
     lower.includes('quẻ') ||
     lower.includes('que')
   ) {
-    return Rituals.drawFortune({ user: cleanUser, uniqueId, avatar, topic: cleanWish, platform });
+    const topic = cleanWish || 'Gia đạo bình an và Tài lộc hanh thông';
+    return Rituals.drawFortune({ user: cleanUser, uniqueId, avatar, topic, platform });
   }
 
-  // 2. Thỉnh chuông
-  if (lower.includes('chuông') || lower.includes('chuong') || lower.includes('thỉnh chuông')) {
-    return Rituals.ringBell({ user: cleanUser, uniqueId, avatar, count: 1, wish: cleanWish, readTts: true, platform });
+  // 2. Thỉnh chuông (Icon: 🔔, 🛎️ hoặc từ khóa)
+  if (
+    isEmojiBell ||
+    lower.includes('chuông') ||
+    lower.includes('chuong') ||
+    lower.includes('thỉnh chuông')
+  ) {
+    const wish = cleanWish || 'Thỉnh Đại Hồng Chung, phiền não tiêu tan, phước lành tăng trưởng';
+    return Rituals.ringBell({ user: cleanUser, uniqueId, avatar, count: 1, wish, readTts: true, platform });
   }
 
-  // 3. Gõ mõ
-  if (lower.includes('gõ mõ') || lower.includes('go mo') || lower.includes('tụng kinh')) {
+  // 3. Gõ mõ (Icon: 🪵, 🔨, 🥁 hoặc từ khóa)
+  if (
+    isEmojiWoodenFish ||
+    lower.includes('gõ mõ') ||
+    lower.includes('go mo') ||
+    lower.includes('tụng kinh')
+  ) {
     return Rituals.strikeWoodenFish({ user: cleanUser, uniqueId, avatar, count: 3, platform });
   }
 
-  // 4. Thắp hương / Bái Phật
+  // 4. Dâng đài hoa sen / Cúng dường (Icon: 🪷, 🌺, 🌸, 💐, 🌼, 💮, 🏵️)
   if (
-    lower.includes('thắp hương') ||
-    lower.includes('thap huong') ||
-    lower.includes('dâng hương') ||
-    lower.includes('dang huong') ||
-    lower.includes('bái phật') ||
-    lower.includes('bai phat') ||
-    lower.includes('lạy phật') ||
-    lower.includes('lay phat')
+    isEmojiLotus ||
+    lower.includes('hoa sen') ||
+    lower.includes('dâng sen') ||
+    lower.includes('cúng hoa') ||
+    lower.includes('dâng hoa')
   ) {
-    return Rituals.burnIncense({ user: cleanUser, uniqueId, avatar, count: 3, wish: cleanWish, platform });
+    const wish = cleanWish || 'Thành tâm dâng đài sen vàng cúng dường Tam Bảo';
+    return Rituals.offerGift({
+      user: cleanUser,
+      uniqueId,
+      avatar,
+      coins: 15,
+      giftType: 'lotus',
+      giftName: 'Đài Hoa Sen Vàng',
+      wish,
+      platform
+    });
   }
 
-  // 5. Cầu nguyện / Thả đèn hoa đăng
+  // 5. Cầu nguyện / Thả đèn hoa đăng (Icon: 🏮, ✨, ⭐, 🌟, 🎆 hoặc từ khóa)
   if (
+    isEmojiLantern ||
+    lower.includes('hoa đăng') ||
+    lower.includes('hoa dang') ||
+    lower.includes('thả đèn') ||
+    lower.includes('tha den') ||
     lower.includes('cầu') ||
     lower.includes('cau ') ||
     lower.includes('nguyện') ||
@@ -829,10 +874,13 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
     lower.includes('tài lộc') ||
     lower.includes('chúc')
   ) {
-    return Rituals.sendPrayer({ user: cleanUser, uniqueId, avatar, wish: cleanWish, platform });
+    const wish = cleanWish || 'Thả hoa đăng cầu quốc thái dân an, gia đạo bình yên';
+    return Rituals.sendPrayer({ user: cleanUser, uniqueId, avatar, wish, platform });
   }
 
-  return Rituals.burnIncense({ user: cleanUser, uniqueId, avatar, count: 1, wish: cleanWish, platform });
+  // 6. Thắp hương / Dâng nhang / Bái Phật (Icon: 🔥, 🕯️, 🪔, ♨️, 🙏 hoặc mặc định)
+  const wish = cleanWish || 'Thành tâm dâng nén tâm hương kính bái Đức Phật A Di Đà';
+  return Rituals.burnIncense({ user: cleanUser, uniqueId, avatar, count: 3, wish, platform });
 }
 
 const giftComboTracker = new Map();

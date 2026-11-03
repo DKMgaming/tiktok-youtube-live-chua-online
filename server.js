@@ -297,6 +297,191 @@ function extractBirthDate(rawText) {
 }
 
 // ============================================================================
+// 1.2 HỆ THỐNG TRA CỨU PHONG THỦY SỐ ĐIỆN THOẠI & ĐUÔI SIM KẾT HỢP NĂM SINH
+// ============================================================================
+const NUMBER_ELEMENTS = {
+  '0': 'Thủy', '1': 'Thủy',
+  '3': 'Mộc', '4': 'Mộc',
+  '9': 'Hỏa',
+  '2': 'Thổ', '5': 'Thổ', '8': 'Thổ',
+  '6': 'Kim', '7': 'Kim'
+};
+
+const NUMBER_MEANINGS = {
+  '0': 'Viên Mãn', '1': 'Nhất Tiến', '2': 'Mãi Hòa', '3': 'Tài Vững',
+  '4': 'Bốn Mùa An', '5': 'Ngũ Phúc', '6': 'Lộc Dồi Dào',
+  '7': 'Phước Quý Nhân', '8': 'Phát Hưng Thịnh', '9': 'Cửu Trường Tồn'
+};
+
+const FAMOUS_TAILS = {
+  '289': { title: 'Mãi Phát Cửu', meaning: 'Tài vận sinh sôi bền vững, công danh thăng tiến trường tồn' },
+  '679': { title: 'Lộc Thần Tài', meaning: 'Đón lộc trời ban, Thần Tài gõ cửa đại cát đại lợi' },
+  '379': { title: 'Tài Thần Tài', meaning: 'Tiền tài hội tụ, kinh doanh buôn bán hanh thông' },
+  '179': { title: 'Nhất Thần Tài', meaning: 'Khởi đầu đắc lộc, quý nhân phù trợ phát tài' },
+  '279': { title: 'Mãi Thần Tài', meaning: 'Tài lộc dài lâu, làm ăn phát đạt thịnh vượng' },
+  '979': { title: 'Đại Thần Tài', meaning: 'Tài lộc đỉnh cao, phú quý song toàn' },
+  '168': { title: 'Nhất Lộc Phát', meaning: 'Khởi đầu thuận buồm xuôi gió, công danh mở rộng' },
+  '268': { title: 'Mãi Lộc Phát', meaning: 'Phúc lộc dài lâu, tài vận hưng thịnh vững vàng' },
+  '368': { title: 'Tài Lộc Phát', meaning: 'Tài trí sinh tài lộc, phát triển thịnh vượng' },
+  '668': { title: 'Lộc Lộc Phát', meaning: 'Tài lộc nhân đôi, làm ăn thuận lợi hanh thông' },
+  '688': { title: 'Lộc Phát Phát', meaning: 'Lộc tài thăng hoa, phát đạt không ngừng' },
+  '868': { title: 'Phát Lộc Phát', meaning: 'Phúc lộc song hành, tài khí cuộn trào' },
+  '968': { title: 'Trường Lộc Phát', meaning: 'Lộc tài trường cửu, sự nghiệp hưng thịnh' },
+  '789': { title: 'Sảnh Tiến Đỉnh Cao', meaning: 'Công danh vươn lên đỉnh cao, tiền đồ rộng mở' },
+  '123': { title: 'Sảnh Tiến Khởi Sắc', meaning: 'Vạn sự hanh thông, bước từng nấc thang thành công' },
+  '456': { title: 'Sảnh Tiến Bền Vững', meaning: 'Bốn mùa ấm no, ngũ phúc lâm môn' },
+  '365': { title: 'Tài Lộc Quanh Năm', meaning: 'Bốn mùa no đủ, 365 ngày bình an đắc lộc' },
+  '389': { title: 'Tam Tài Phát Cửu', meaning: 'Tài trí kiên cường, trường thọ an khang' },
+  '569': { title: 'Phúc Lộc Thọ', meaning: 'Tam đa túc thiện, gia đạo viên mãn' },
+  '111': { title: 'Tam Nhất Độc Tôn', meaning: 'Ý chí tiên phong, vạn sự hanh thông' },
+  '222': { title: 'Tam Mãi Bình An', meaning: 'Gia đạo êm ấm, song hỷ hòa hợp' },
+  '333': { title: 'Tam Tài Vững Chãi', meaning: 'Vững như kiềng ba chân, tài trí vẹn toàn' },
+  '444': { title: 'Tứ Quý Bình An', meaning: 'Bốn mùa cát tường, tứ đức vẹn toàn' },
+  '555': { title: 'Tam Phúc Uy Quyền', meaning: 'Ngũ phúc lâm môn, sinh sôi vượng khí' },
+  '666': { title: 'Tam Lộc Đại Cát', meaning: 'Tài lộc dồi dào, tiền bạc hanh thông' },
+  '777': { title: 'Tam Quý Phước Lành', meaning: 'Quý nhân tương trợ, ánh sáng tâm linh soi đường' },
+  '888': { title: 'Tam Phát Thịnh Vượng', meaning: 'Đại phát đại lợi, sự nghiệp thăng hoa rực rỡ' },
+  '999': { title: 'Tam Cửu Trường Tồn', meaning: 'Vĩnh cửu trường thọ, đỉnh cao danh vọng' }
+};
+
+const ELEMENT_BEGOTTEN = {
+  'Thủy': 'Kim',
+  'Mộc': 'Thủy',
+  'Hỏa': 'Mộc',
+  'Thổ': 'Hỏa',
+  'Kim': 'Thổ'
+};
+
+function calculatePhoneHoroscope(phone, last3, year, birthDate, devoteeName) {
+  const tail = (last3 || (phone ? phone.slice(-3) : '999')).padStart(3, '0');
+  const d1 = tail[0], d2 = tail[1], d3 = tail[2];
+
+  let tailInfo = FAMOUS_TAILS[tail];
+  if (!tailInfo) {
+    const title = NUMBER_MEANINGS[d1].split(' ')[0] + ' ' + NUMBER_MEANINGS[d2].split(' ')[0] + ' ' + NUMBER_MEANINGS[d3].split(' ')[0];
+    const meaning = `${NUMBER_MEANINGS[d1]}, ${NUMBER_MEANINGS[d2]} và ${NUMBER_MEANINGS[d3]} — vận số hài hòa, khởi sắc an lành`;
+    tailInfo = { title, meaning };
+  }
+
+  const elements = [NUMBER_ELEMENTS[d1], NUMBER_ELEMENTS[d2], NUMBER_ELEMENTS[d3]];
+
+  let canChi = '', napAm = '', element = '', buddha = '', harmonyTitle = 'Cát Tường Như Ý', harmonyDesc = 'Thế số mang lại năng lượng an lành, chiêu tài đón lộc';
+  let score = '9.5/10';
+
+  if (year) {
+    const can = CAN_NAMES[year % 10];
+    const chiIdx = ((year - 4) % 12 + 12) % 12;
+    const chi = CHI_NAMES[chiIdx];
+    canChi = `${can} ${chi}`;
+
+    const hoaGiapIdx = ((year - 4) % 60 + 60) % 60;
+    const napAmObj = NAP_AM_60[hoaGiapIdx];
+    napAm = napAmObj.name;
+    element = napAmObj.element;
+    buddha = BUDDHA_PATRONS[chiIdx].buddha;
+
+    const generatingElement = ELEMENT_BEGOTTEN[element];
+    const hasGenerating = elements.includes(generatingElement);
+    const hasSame = elements.includes(element);
+
+    if (hasGenerating) {
+      harmonyTitle = `Đại Cát Tương Sinh (${generatingElement} sinh ${element})`;
+      harmonyDesc = `Đuôi số chứa hành ${generatingElement} tương sinh vượng khí bản mệnh ${napAm}, kích hoạt tài lộc và quý nhân nâng đỡ.`;
+      score = '9.8/10';
+    } else if (hasSame) {
+      harmonyTitle = `Bản Mệnh Tương Hỗ (${element} trợ ${element})`;
+      harmonyDesc = `Đuôi số cùng hành bản mệnh ${element}, củng cố nội lực vững vàng, gia đạo bình yên.`;
+      score = '9.5/10';
+    } else {
+      harmonyTitle = 'Hòa Hợp Cát Lành';
+      harmonyDesc = 'Đuôi số thế số đẹp, điều hòa năng lượng giúp tâm định trí sáng.';
+      score = '9.2/10';
+    }
+  }
+
+  const phoneDisplay = phone && phone.length === 10
+    ? `${phone.slice(0, 4)}.${phone.slice(4, 7)}.${phone.slice(7)}`
+    : phone;
+
+  const ttsText = year
+    ? `Thí chủ ${formatDevoteeNameForTts(devoteeName)}, sinh năm ${year} tuổi ${canChi}, mệnh ${napAm}. Số điện thoại đuôi ${tail} mang thế số ${tailInfo.title}, ${tailInfo.meaning}. ${harmonyDesc} Lời khuyên cửa Phật: Đức năng thắng số, tâm thiện tích đức thì họa lùi phúc tới, phú quý trường thọ. Nam Mô A Di Đà Phật.`
+    : `Thí chủ ${formatDevoteeNameForTts(devoteeName)}, số điện thoại đuôi ${tail} mang thế số ${tailInfo.title}, ${tailInfo.meaning}. Thế số ${harmonyTitle}. Lời khuyên cửa Phật: Đức năng thắng số, tâm thiện tích phúc thì tài lộc tự nhiên trường tồn. Nam Mô A Di Đà Phật.`;
+
+  return {
+    phone: phoneDisplay,
+    tail,
+    year,
+    canChi,
+    napAm,
+    element,
+    buddha,
+    tailTitle: tailInfo.title,
+    tailMeaning: tailInfo.meaning,
+    harmonyTitle,
+    harmonyDesc,
+    score,
+    ttsText
+  };
+}
+
+function extractPhoneAndYear(rawText) {
+  if (!rawText) return null;
+  const s = String(rawText).trim();
+
+  // 1. Tìm số điện thoại 10 chữ số (hỗ trợ cách nhau bởi dấu cách, chấm, gạch)
+  const phoneMatch = s.match(/(?:\+84|0)(?:3|5|7|8|9)(?:[\s.-]?\d){8}\b/);
+  let phone = null;
+  let last3 = null;
+  let textWithoutPhone = s;
+
+  if (phoneMatch) {
+    phone = phoneMatch[0].replace(/[\s.-]/g, '');
+    if (phone.startsWith('+84')) phone = '0' + phone.slice(3);
+    last3 = phone.slice(-3);
+    textWithoutPhone = s.replace(phoneMatch[0], ' ');
+  } else {
+    // Tìm dạng đuôi sim: "đuôi 289", "số cuối 289", "sim 289"
+    const tailMatch = s.match(/(?:đuôi|cuối|sim|sđt|số)\s*:?\s*(\d{3,4})\b/i);
+    if (tailMatch) {
+      last3 = tailMatch[1].slice(-3);
+      phone = '...' + tailMatch[1];
+      textWithoutPhone = s.replace(tailMatch[0], ' ');
+    }
+  }
+
+  // 2. Tìm ngày sinh hoặc năm sinh trong phần chữ còn lại
+  const dateMatch = textWithoutPhone.match(/(?:^|[^\d])(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})(?:[^\d]|$)/);
+  let birthDate = null;
+  let year = null;
+
+  if (dateMatch) {
+    let d = parseInt(dateMatch[1], 10);
+    let m = parseInt(dateMatch[2], 10);
+    let y = parseInt(dateMatch[3], 10);
+    if (y < 100) y = y <= 35 ? 2000 + y : 1900 + y;
+    if (d >= 1 && d <= 31 && m >= 1 && m <= 12 && y >= 1920 && y <= 2030) {
+      const daysInMonth = new Date(y, m, 0).getDate();
+      if (d <= daysInMonth) {
+        birthDate = { day: d, month: m, year: y };
+        year = y;
+      }
+    }
+  }
+
+  if (!year) {
+    const yearMatch = textWithoutPhone.match(/\b(19\d{2}|20[0-2]\d)\b/);
+    if (yearMatch) {
+      year = parseInt(yearMatch[1], 10);
+    }
+  }
+
+  if (phone) {
+    return { phone, last3, year, birthDate };
+  }
+  return null;
+}
+
+// ============================================================================
 // 2. ZEROTTS PYTHON WORKER MANAGER (VOICE: MAI CHI)
 // ============================================================================
 class ZeroTTSManager {
@@ -930,6 +1115,50 @@ const Rituals = {
     return { event, state: getPublicState() };
   },
 
+  readPhoneHoroscope(params = {}) {
+    const user = sanitizeUserName(params.user);
+    const uniqueId = params.uniqueId || '';
+    const avatar = params.avatar || '';
+    const phoneData = params.phoneData;
+    if (!phoneData || (!phoneData.phone && !phoneData.last3)) {
+      return null;
+    }
+    const phoneHoroscope = calculatePhoneHoroscope(
+      phoneData.phone,
+      phoneData.last3,
+      phoneData.year,
+      phoneData.birthDate,
+      user
+    );
+    const merit = 15;
+
+    state.totalIncense += 1;
+    const logDesc = phoneHoroscope.year
+      ? `Xem SIM phong thủy: Đuôi ${phoneHoroscope.tail} (${phoneHoroscope.canChi})`
+      : `Xem SIM phong thủy: Đuôi ${phoneHoroscope.tail}`;
+    const devotee = recordDevotee(user, uniqueId, avatar, merit, 1, 0, logDesc);
+
+    const ttsText = params.readTts === false
+      ? ''
+      : cleanTtsText(phoneHoroscope.ttsText);
+
+    const event = pushEventLog({
+      type: 'readPhoneHoroscope',
+      user: devotee.name,
+      uniqueId: devotee.uniqueId,
+      avatar: devotee.avatar,
+      phoneHoroscope,
+      merit,
+      ttsText,
+      ttsVoice: state.settings.ttsVoice || 'maichi',
+      platform: params.platform || 'tiktok'
+    });
+
+    saveState();
+    broadcastNotification('temple.event', { event, state: getPublicState() });
+    return { event, state: getPublicState() };
+  },
+
   grandCeremony(params = {}) {
     return this.offerGift({
       ...params,
@@ -992,10 +1221,13 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
     return null;
   }
 
-  // 1. Nhận diện ngày tháng năm sinh để xem căn số tử vi (dd/mm/yyyy, dd-mm-yy...)
-  const birthDate = extractBirthDate(raw);
+  // 1. Nhận diện số điện thoại (hoặc số điện thoại kết hợp năm sinh)
+  const phoneData = extractPhoneAndYear(raw);
 
-  // 2. Nhận diện nghi thức theo Icon / Emoji đặc biệt (rất phổ biến trên YouTube Live)
+  // 2. Nhận diện ngày tháng năm sinh xem căn số tử vi (nếu không có số điện thoại)
+  const birthDate = !phoneData ? extractBirthDate(raw) : null;
+
+  // 3. Nhận diện nghi thức theo Icon / Emoji đặc biệt (rất phổ biến trên YouTube Live)
   const isEmojiFortune = EMOJI_RITUAL_PATTERNS.fortune.test(raw);
   const isEmojiBell = EMOJI_RITUAL_PATTERNS.bell.test(raw);
   const isEmojiWoodenFish = EMOJI_RITUAL_PATTERNS.woodenFish.test(raw);
@@ -1003,12 +1235,12 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
   const isEmojiLantern = EMOJI_RITUAL_PATTERNS.lantern.test(raw);
   const isEmojiIncense = EMOJI_RITUAL_PATTERNS.incense.test(raw);
   const hasSpecialEmoji = isEmojiFortune || isEmojiBell || isEmojiWoodenFish || isEmojiLotus || isEmojiLantern || isEmojiIncense;
-  const hasSpecialIntent = Boolean(birthDate || hasSpecialEmoji);
+  const hasSpecialIntent = Boolean(phoneData || birthDate || hasSpecialEmoji);
 
   // Lọc lời khấn dạng chữ nếu có
   const cleanWish = sanitizeWishText(raw);
 
-  // Nếu không có căn số ngày sinh / icon đặc biệt VÀ cũng không có lời khấn chữ hợp lệ (ít hơn 3 ký tự) -> bỏ qua
+  // Nếu không có sim / căn số ngày sinh / icon đặc biệt VÀ cũng không có lời khấn chữ hợp lệ (ít hơn 3 ký tự) -> bỏ qua
   if (!hasSpecialIntent && (!cleanWish || cleanWish.length < 3)) {
     return null;
   }
@@ -1031,7 +1263,18 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
   const cleanUser = sanitizeUserName(user);
   const lower = (cleanWish || raw).toLowerCase();
 
-  // 1. ƯU TIÊN ĐỌC CĂN SỐ TỬ VI BẢN MỆNH KHI COMMENT CÓ NGÀY THÁNG NĂM SINH
+  // 1. ƯU TIÊN XEM PHONG THỦY SỐ ĐIỆN THOẠI (3 SỐ CUỐI + NĂM SINH)
+  if (phoneData) {
+    return Rituals.readPhoneHoroscope({
+      user: cleanUser,
+      uniqueId,
+      avatar,
+      phoneData,
+      platform
+    });
+  }
+
+  // 2. ƯU TIÊN ĐỌC CĂN SỐ TỬ VI BẢN MỆNH KHI COMMENT CÓ NGÀY THÁNG NĂM SINH
   if (birthDate) {
     return Rituals.readHoroscope({
       user: cleanUser,
@@ -1042,7 +1285,7 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
     });
   }
 
-  // 2. Xin xăm / Gieo quẻ (Icon: 🎋, 🎍, 📜 hoặc từ khóa)
+  // 3. Xin xăm / Gieo quẻ (Icon: 🎋, 🎍, 📜 hoặc từ khóa)
   if (
     isEmojiFortune ||
     lower.includes('xin xăm') ||
@@ -1582,6 +1825,8 @@ async function handleRpcCall(method, params = {}) {
       return Rituals.drawFortune(params);
     case 'temple.readHoroscope':
       return Rituals.readHoroscope(params);
+    case 'temple.readPhoneHoroscope':
+      return Rituals.readPhoneHoroscope(params);
     case 'temple.grandCeremony':
       return Rituals.grandCeremony(params);
     case 'temple.updateSettings':

@@ -95,6 +95,7 @@ Mặc định server chạy tại cổng `3000`:
 | :--- | :--- | :--- | :---: |
 | **Thả tim (Like)** | Mỗi đợt thả tim | Gõ mõ gỗ tụng kinh + Làn sóng Phật tử vái lạy | `+1` / tim |
 | **Follow / Share** | Theo dõi hoặc chia sẻ | Thỉnh Đại Hồng Chung ngân vang + Sóng âm vàng | `+10` |
+| **Bình luận Số ĐT + Năm sinh (Phong Thủy SIM)** | `1977 0948679289`, `1988 đuôi 789`, `0948...` | Tự động luận giải **Ý nghĩa 3 số cuối (Đuôi SIM) kết hợp Mệnh Ngũ Hành Năm Sinh**, thế số cát tường, độ tương sinh bản mệnh & lời khuyên Phật pháp | `+15` |
 | **Bình luận Ngày sinh (Căn số Tử Vi)** | `dd/mm/yyyy`, `dd-mm-yy`, `15/08/1995`, `12-05-98` | Tự động tính toán & hiển thị bảng **Căn Số Tử Vi, Can Chi, Mệnh Ngũ Hành Nạp Âm (60 Hoa Giáp), Phật Bản Mệnh (8 Tôn Phật) & Số Chủ Đạo** + Giọng đọc Mai Chi luận giải | `+15` |
 | **Bình luận Thắp hương** | `thắp hương`, `dâng hương`, `bái phật`, `lạy phật` | Phật tử bước dọc thảm đỏ lên trước Lư Hương, quỳ đảnh lễ 3 lạy + Đọc tên khấn | `+15` |
 | **Bình luận Cầu nguyện** | `cầu ...`, `nguyện ...`, `nam mô`, `a di đà phật`, `bình an`, `chúc ...` | Bước lên đảnh lễ + Thả Đèn Hoa Đăng mang lời khấn bay lên trời + Đọc lời cầu nguyện | `+10` |

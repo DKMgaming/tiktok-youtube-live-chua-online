@@ -511,6 +511,8 @@
         return `${badge}🎋 <strong>${escapeHtml(ev.user)}</strong> gieo được Quẻ số ${ev.fortune?.number} (${ev.fortune?.rank})`;
       case 'readHoroscope':
         return `${badge}☸ <strong>${escapeHtml(ev.user)}</strong> xem căn số tử vi: ${escapeHtml(ev.horoscope?.canChi)} (Mệnh ${escapeHtml(ev.horoscope?.napAm)})`;
+      case 'readPhoneHoroscope':
+        return `${badge}📱 <strong>${escapeHtml(ev.user)}</strong> xem SIM phong thủy: Đuôi ${escapeHtml(ev.phoneHoroscope?.tail)} (${escapeHtml(ev.phoneHoroscope?.tailTitle)})`;
       default:
         return `${badge}✨ <strong>${escapeHtml(ev.user || 'Thí chủ')}</strong> tương tác`;
     }
@@ -524,7 +526,7 @@
   function triggerRitualVisuals(ev) {
     if (!ev) return;
 
-    if (ev.ttsText && ev.type !== 'drawFortune' && ev.type !== 'readHoroscope') {
+    if (ev.ttsText && ev.type !== 'drawFortune' && ev.type !== 'readHoroscope' && ev.type !== 'readPhoneHoroscope') {
       audio.enqueueTts(ev.ttsText, { voice: ev.ttsVoice || 'maichi' });
     }
 
@@ -644,6 +646,38 @@
         });
         break;
       }
+
+      case 'readPhoneHoroscope': {
+        audio.playIncenseChime();
+        updateCentralWorshipper(
+          ev.user,
+          ev.avatar,
+          `📱 Xem SIM Phong Thủy...`,
+          `Thí chủ ${ev.user} đang xem số đuôi ${ev.phoneHoroscope?.tail} (${ev.phoneHoroscope?.tailTitle})...`,
+          false
+        );
+        audio.enqueueTts(ev.ttsText || '', {
+          voice: ev.ttsVoice || 'maichi',
+          onStart: () => {
+            audio.playTempleBell(0.85);
+            showPhoneHoroscopeModal(ev.user, ev.phoneHoroscope);
+            updateCentralWorshipper(
+              ev.user,
+              ev.avatar,
+              `📱 Đuôi ${ev.phoneHoroscope?.tail} • ${ev.phoneHoroscope?.tailTitle}`,
+              ev.phoneHoroscope?.harmonyTitle || '',
+              true
+            );
+          },
+          onEnd: () => {
+            clearTimeout(horoscopeTimer);
+            horoscopeTimer = setTimeout(() => {
+              document.getElementById('horoscopeModal')?.classList.remove('visible');
+            }, 2000);
+          }
+        });
+        break;
+      }
     }
   }
 
@@ -688,16 +722,59 @@
     if (!horoscope) return;
     const modal = document.getElementById('horoscopeModal');
     if (!modal) return;
+    document.getElementById('hsBadge').textContent = '☸ CĂN SỐ TỬ VI & PHẬT BẢN MỆNH';
     document.getElementById('hsDevotee').textContent = `Thí chủ: ${user}`;
     document.getElementById('hsBirthday').textContent = `Sinh ngày: ${horoscope.birthDateStr}`;
-    document.getElementById('hsCanChi').textContent = horoscope.canChi;
-    document.getElementById('hsNapAm').textContent = `${horoscope.napAm} (${horoscope.element})`;
-    document.getElementById('hsNapAmDesc').textContent = horoscope.napAmDesc;
-    document.getElementById('hsBuddha').textContent = horoscope.phatBanMenh;
-    document.getElementById('hsBuddhaBlessing').textContent = horoscope.phatBanMenhBlessing;
-    document.getElementById('hsLifePath').textContent = `Số ${horoscope.lifePathNumber} — ${horoscope.lifePathTitle}`;
-    document.getElementById('hsLifePathTrait').textContent = horoscope.lifePathTrait;
+    document.getElementById('hsLabel1').textContent = 'NĂM TUỔI';
+    document.getElementById('hsVal1').textContent = horoscope.canChi;
+    document.getElementById('hsSub1').textContent = '';
+    document.getElementById('hsLabel2').textContent = 'BẢN MỆNH';
+    document.getElementById('hsVal2').textContent = `${horoscope.napAm} (${horoscope.element})`;
+    document.getElementById('hsSub2').textContent = horoscope.napAmDesc;
+    document.getElementById('hsLabel3').textContent = 'PHẬT BẢN MỆNH';
+    document.getElementById('hsVal3').textContent = horoscope.phatBanMenh;
+    document.getElementById('hsSub3').textContent = horoscope.phatBanMenhBlessing;
+    document.getElementById('hsLabel4').textContent = 'SỐ CĂN MỆNH';
+    document.getElementById('hsVal4').textContent = `Số ${horoscope.lifePathNumber} — ${horoscope.lifePathTitle}`;
+    document.getElementById('hsSub4').textContent = horoscope.lifePathTrait;
+    document.getElementById('hsAdviceTitle').textContent = '🪷 LỜI BÌNH CĂN DUYÊN & TU TÂM PHẬT PHÁP';
     document.getElementById('hsAdvice').textContent = horoscope.dharmaAdvice;
+
+    modal.classList.add('visible');
+    clearTimeout(horoscopeTimer);
+    horoscopeTimer = setTimeout(() => {
+      modal.classList.remove('visible');
+    }, 18000);
+  }
+
+  function showPhoneHoroscopeModal(user, ph) {
+    if (!ph) return;
+    const modal = document.getElementById('horoscopeModal');
+    if (!modal) return;
+    document.getElementById('hsBadge').textContent = '📱 PHONG THỦY SIM SỐ & BẢN MỆNH';
+    document.getElementById('hsDevotee').textContent = `Thí chủ: ${user}`;
+    document.getElementById('hsBirthday').textContent = ph.year
+      ? `Số ĐT: ${ph.phone} • Năm sinh: ${ph.year} (${ph.canChi})`
+      : `Số ĐT: ${ph.phone}`;
+
+    document.getElementById('hsLabel1').textContent = 'NĂM TUỔI & MỆNH';
+    document.getElementById('hsVal1').textContent = ph.year ? ph.canChi : 'Vận Khí Hanh Thông';
+    document.getElementById('hsSub1').textContent = ph.year ? `Mệnh ${ph.napAm}` : 'Năng lượng số học';
+
+    document.getElementById('hsLabel2').textContent = 'ĐUÔI SIM PHONG THỦY';
+    document.getElementById('hsVal2').textContent = `Đuôi ${ph.tail} — ${ph.tailTitle}`;
+    document.getElementById('hsSub2').textContent = ph.tailMeaning;
+
+    document.getElementById('hsLabel3').textContent = 'ĐỘ HỢP BẢN MỆNH';
+    document.getElementById('hsVal3').textContent = ph.harmonyTitle;
+    document.getElementById('hsSub3').textContent = ph.harmonyDesc;
+
+    document.getElementById('hsLabel4').textContent = 'PHẬT BẢN MỆNH';
+    document.getElementById('hsVal4').textContent = ph.year ? ph.buddha : 'Đức Phật A Di Đà';
+    document.getElementById('hsSub4').textContent = 'Hộ trì bình an, tiêu trừ chướng ngại';
+
+    document.getElementById('hsAdviceTitle').textContent = '🪷 LỜI BÌNH PHONG THỦY & TU TÂM PHẬT PHÁP';
+    document.getElementById('hsAdvice').textContent = `Đuôi số ${ph.tail} mang thế số ${ph.tailTitle}, ${ph.harmonyDesc} Lời khuyên cửa Phật: Đức năng thắng số, tâm thiện tích đức thì họa lùi phúc tới, phú quý trường thọ. Nam Mô A Di Đà Phật.`;
 
     modal.classList.add('visible');
     clearTimeout(horoscopeTimer);

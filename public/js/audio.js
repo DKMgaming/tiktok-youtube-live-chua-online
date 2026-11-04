@@ -483,7 +483,7 @@ class TempleAudioEngine {
   async fetchZeroTtsAudio(text, voice = 'maichi') {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 16000);
+      const timeoutId = setTimeout(() => controller.abort(), 28000);
       const res = await fetch('/api/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -240,7 +240,7 @@ function calculateHoroscope(day, month, year, gender, devoteeName) {
 
   const summaryShort = `Tuổi ${canChi} • Mệnh ${napAmObj.name} • ${patronObj.buddha} hộ mệnh • Số ${lifePathNum}`;
 
-  const ttsText = `Thí chủ ${formatDevoteeNameForTts(devoteeName)}, sinh ngày ${day} tháng ${month} năm ${year}. Tuổi ${canChi}, bản mệnh ${napAmObj.name}, hành ${napAmObj.element}. Phật bản mệnh là ${patronObj.buddha} gia hộ. Số căn mệnh là số ${lifePathNum}, ${lifePathObj.title}. ${lifePathObj.trait}. Lời khuyên tu tâm: ${advice} Nam Mô A Di Đà Phật.`;
+  const ttsText = `Thí chủ ${formatDevoteeNameForTts(devoteeName)}, tuổi ${canChi}, mệnh ${napAmObj.name}. Được ${patronObj.buddha} gia hộ bình an. Số căn mệnh ${lifePathNum}, ${lifePathObj.title}. Nam Mô A Di Đà Phật.`;
 
   return {
     birthDateStr,
@@ -404,8 +404,8 @@ function calculatePhoneHoroscope(phone, last3, year, birthDate, devoteeName) {
     : phone;
 
   const ttsText = year
-    ? `Thí chủ ${formatDevoteeNameForTts(devoteeName)}, sinh năm ${year} tuổi ${canChi}, mệnh ${napAm}. Số điện thoại đuôi ${tail} mang thế số ${tailInfo.title}, ${tailInfo.meaning}. ${harmonyDesc} Lời khuyên cửa Phật: Đức năng thắng số, tâm thiện tích đức thì họa lùi phúc tới, phú quý trường thọ. Nam Mô A Di Đà Phật.`
-    : `Thí chủ ${formatDevoteeNameForTts(devoteeName)}, số điện thoại đuôi ${tail} mang thế số ${tailInfo.title}, ${tailInfo.meaning}. Thế số ${harmonyTitle}. Lời khuyên cửa Phật: Đức năng thắng số, tâm thiện tích phúc thì tài lộc tự nhiên trường tồn. Nam Mô A Di Đà Phật.`;
+    ? `Thí chủ ${formatDevoteeNameForTts(devoteeName)}, năm ${year} tuổi ${canChi}, mệnh ${element}. Số đuôi ${tail} ${tailInfo.title}, ${harmonyTitle}. Đức năng thắng số, vạn sự cát tường.`
+    : `Thí chủ ${formatDevoteeNameForTts(devoteeName)}, số đuôi ${tail} ${tailInfo.title}, ${tailInfo.meaning}. Tâm thiện tích đức, tài lộc trường tồn.`;
 
   return {
     phone: phoneDisplay,

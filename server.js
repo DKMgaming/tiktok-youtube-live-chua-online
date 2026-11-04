@@ -1214,6 +1214,9 @@ const EMOJI_RITUAL_PATTERNS = {
 };
 
 const commentCooldownMap = new Map();
+const recentCommentHashMap = new Map();
+const seenYouTubeChatIds = new Set();
+const seenTikTokChatIds = new Set();
 
 function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tiktok') {
   const raw = String(commentText || '').trim();
@@ -1245,19 +1248,32 @@ function parseViewerComment(commentText, user, uniqueId, avatar, platform = 'tik
     return null;
   }
 
-  // Chống 1 người spam bình luận liên tục làm nghẽn hàng đợi TTS (cooldown 3.5 giây/người)
-  const userKey = uniqueId || user || '';
+  // Chống lặp bình luận và spam (Deduplication & Cooldown)
+  const userKey = String(uniqueId || user || 'devotee_anon').trim();
   const now = Date.now();
-  if (userKey) {
-    const lastTs = commentCooldownMap.get(userKey) || 0;
-    if (now - lastTs < 3500) {
-      return null;
-    }
-    commentCooldownMap.set(userKey, now);
-    if (commentCooldownMap.size > 600) {
-      const oldestKey = commentCooldownMap.keys().next().value;
-      commentCooldownMap.delete(oldestKey);
-    }
+
+  // A. Cooldown theo người dùng (tối thiểu 3.5 giây giữa 2 bình luận)
+  const lastTs = commentCooldownMap.get(userKey) || 0;
+  if (now - lastTs < 3500) {
+    return null;
+  }
+
+  // B. Chống lặp đúng nguyên văn bình luận trong 6 giây (tránh đọc 2 lần khi YouTube/TikTok gửi lại cùng tin nhắn)
+  const contentKey = `${userKey}::${raw.toLowerCase().replace(/\s+/g, '')}`;
+  const lastContentTs = recentCommentHashMap.get(contentKey) || 0;
+  if (now - lastContentTs < 6000) {
+    return null;
+  }
+  recentCommentHashMap.set(contentKey, now);
+  if (recentCommentHashMap.size > 800) {
+    const oldest = recentCommentHashMap.keys().next().value;
+    recentCommentHashMap.delete(oldest);
+  }
+
+  commentCooldownMap.set(userKey, now);
+  if (commentCooldownMap.size > 600) {
+    const oldestKey = commentCooldownMap.keys().next().value;
+    commentCooldownMap.delete(oldestKey);
   }
 
   const cleanUser = sanitizeUserName(user);
@@ -1482,6 +1498,13 @@ async function connectTikTokLive(usernameOrUrl) {
   tiktokConn.on(WebcastEvent.CHAT, (data) => {
     const { user, uniqueId, avatar } = extractUserFromEvent(data);
     const commentText = data?.content || data?.comment || '';
+    const msgId = String(data?.msgId || data?.id || `${uniqueId}_${commentText}`);
+    if (seenTikTokChatIds.has(msgId)) return;
+    seenTikTokChatIds.add(msgId);
+    if (seenTikTokChatIds.size > 1200) {
+      const oldest = seenTikTokChatIds.values().next().value;
+      seenTikTokChatIds.delete(oldest);
+    }
     console.log(`[TikTok Chat] ${user}: ${commentText}`);
     parseViewerComment(commentText, user, uniqueId, avatar);
   });
@@ -1658,7 +1681,7 @@ async function connectYouTubeLive(rawTarget) {
   };
   broadcastNotification('temple.state', getPublicState());
 
-  youtubeConn = new LiveChat(query, 1200);
+  youtubeConn = new LiveChat(query, 2000);
 
   youtubeConn.on('start', (liveId) => {
     state.youtube.connected = true;
@@ -1690,6 +1713,17 @@ async function connectYouTubeLive(rawTarget) {
 
     const messagePieces = Array.isArray(chatItem.message) ? chatItem.message : [];
     const commentText = messagePieces.map((m) => m?.text || m?.emojiText || '').join('').trim();
+
+    // Chống lặp tin nhắn chat YouTube khi polling
+    const chatId = String(chatItem.id || `${channelId}_${chatItem.timestamp || Date.now()}_${commentText}`);
+    if (seenYouTubeChatIds.has(chatId)) {
+      return;
+    }
+    seenYouTubeChatIds.add(chatId);
+    if (seenYouTubeChatIds.size > 1200) {
+      const oldest = seenYouTubeChatIds.values().next().value;
+      seenYouTubeChatIds.delete(oldest);
+    }
 
     // Super Chat / Super Sticker
     if (chatItem.superchat) {

@@ -254,11 +254,12 @@
     }
     document.getElementById('btnSpeakMaiChi').onclick = async () => {
       const text = document.getElementById('ttsDirectText').value.trim();
+      if (!text) return;
       const data = await sendRpc('temple.speak', { text, voice: 'maichi', broadcast: true });
       if (data?.result?.url) {
         const player = document.getElementById('adminAudioPreview');
         player.src = data.result.url;
-        player.play().catch(() => {});
+        // Không tự phát âm thanh tại admin khi đã phát lên màn hình Live để tránh bị trùng lặp tiếng
       }
     };
 

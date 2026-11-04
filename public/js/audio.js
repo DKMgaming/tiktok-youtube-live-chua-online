@@ -38,6 +38,7 @@ class TempleAudioEngine {
     this.ttsPlaying = false;
     this.currentAudio = null;
     this.onTtsStateChange = null;
+    this.recentTtsMap = new Map();
   }
 
   setupBgAudioListeners() {
@@ -428,6 +429,30 @@ class TempleAudioEngine {
     if (!clean) {
       if (onStart) onStart();
       if (onEnd) setTimeout(onEnd, 5500);
+      return;
+    }
+
+    // Chống lặp giọng đọc (Deduplication): Bỏ qua nếu câu này vừa được phát/xếp hàng trong 4.5 giây
+    const now = Date.now();
+    const normKey = clean.toLowerCase().replace(/\s+/g, ' ');
+    const lastSpoken = this.recentTtsMap.get(normKey) || 0;
+    if (now - lastSpoken < 4500) {
+      console.log('[TTS Deduplication] Bỏ qua câu đọc bị trùng lặp trong 4.5s:', clean);
+      if (onStart) onStart();
+      if (onEnd) setTimeout(onEnd, 2000);
+      return;
+    }
+    this.recentTtsMap.set(normKey, now);
+    if (this.recentTtsMap.size > 200) {
+      const oldest = this.recentTtsMap.keys().next().value;
+      this.recentTtsMap.delete(oldest);
+    }
+
+    // Nếu câu này đã có sẵn trong hàng đợi đang chờ phát, cũng bỏ qua để tránh đọc 2 lần
+    if (this.ttsQueue.some(item => item.text.toLowerCase().replace(/\s+/g, ' ') === normKey)) {
+      console.log('[TTS Deduplication] Bỏ qua câu đọc đã có trong hàng đợi:', clean);
+      if (onStart) onStart();
+      if (onEnd) setTimeout(onEnd, 2000);
       return;
     }
 

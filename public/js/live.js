@@ -522,9 +522,20 @@
   let fortuneTimer = null;
   let horoscopeTimer = null;
   let grandTimer = null;
+  const processedEventIds = new Set();
 
   function triggerRitualVisuals(ev) {
     if (!ev) return;
+
+    // Chống xử lý lặp sự kiện (Deduplication theo Event ID)
+    if (ev.id) {
+      if (processedEventIds.has(ev.id)) return;
+      processedEventIds.add(ev.id);
+      if (processedEventIds.size > 300) {
+        const oldest = processedEventIds.values().next().value;
+        processedEventIds.delete(oldest);
+      }
+    }
 
     if (ev.ttsText && ev.type !== 'drawFortune' && ev.type !== 'readHoroscope' && ev.type !== 'readPhoneHoroscope') {
       audio.enqueueTts(ev.ttsText, { voice: ev.ttsVoice || 'maichi' });

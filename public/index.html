@@ -53,6 +53,9 @@
             <span id="liveStatusText">CHÙA LINH ỨNG • ĐỨC PHẬT A DI ĐÀ</span>
           </div>
           <div class="top-Right-badges">
+            <button type="button" class="top-guide-pill" id="btnOpenGuide" title="Xem Cẩm Nang Căn Số & Nghi Thức">
+              📖 Hướng Dẫn & Căn Số
+            </button>
             <div class="mini-stat-pill">
               🔥 <strong id="statIncense">108</strong> hương • ✨ <strong id="statMerit">1,080</strong> CĐ
             </div>
@@ -301,8 +304,193 @@
     </aside>
   </div>
 
-  <script src="/js/audio.js?v=2.2.2"></script>
-  <script src="/js/particles.js?v=2.2.2"></script>
-  <script src="/js/live.js?v=2.2.2"></script>
+  <!-- ====================================================================
+       CỔNG TAM QUAN — NHẬP PHÁP DANH CHIÊM BÁI & HƯỚNG DẪN CĂN SỐ
+       ==================================================================== -->
+  <div class="temple-gate-overlay" id="templeGateOverlay">
+    <div class="temple-gate-container">
+      <!-- Đỉnh Mái Cổng Chùa -->
+      <div class="gate-pagoda-roof">
+        <div class="gate-pagoda-crest">☸ 卍 ☸</div>
+        <h1 class="gate-main-title">CỔNG TAM QUAN — LINH ỨNG TỰ</h1>
+        <p class="gate-main-subtitle">Kính Cẩn Bái Phật • Nhập Pháp Danh Chiêm Bái • Tích Phúc Tụ Duyên</p>
+      </div>
+
+      <div class="gate-body-grid">
+        <!-- Khối Trái: Nhập Pháp Danh & Vào Chùa -->
+        <div class="gate-card gate-entry-card">
+          <div class="gate-card-header">
+            <span class="gate-card-icon">🪷</span>
+            <div>
+              <div class="gate-card-title">Ghi Danh Chiêm Bái</div>
+              <div class="gate-card-desc">Nhập Pháp danh để lưu vào Chánh Điện & Bảng Công Đức</div>
+            </div>
+          </div>
+
+          <div class="gate-form-group">
+            <label for="gateDevoteeName">🏷️ Pháp Danh / Tên Thí Chủ <span class="req">*</span></label>
+            <input
+              type="text"
+              id="gateDevoteeName"
+              class="gate-input"
+              placeholder="Nhập Pháp danh (vd: Tâm An, Diệu Thiện, Minh Trí...)"
+              maxlength="32"
+            />
+          </div>
+
+          <div class="gate-form-group">
+            <label for="gateDevoteeWish">🙏 Lời Cầu Nguyện Khi Bước Vào Chùa</label>
+            <input
+              type="text"
+              id="gateDevoteeWish"
+              class="gate-input"
+              value="Cầu cho gia đạo bình an, tài lộc hanh thông, vạn sự như ý"
+              maxlength="90"
+            />
+          </div>
+
+          <button type="button" class="gate-enter-btn" id="btnEnterTemple">
+            <span class="btn-lotus">🪷</span>
+            <span>BƯỚC QUA CỔNG VÀO CHÁNH ĐIỆN</span>
+            <span class="btn-arrow">➔</span>
+          </button>
+          <div class="gate-enter-hint">
+            🔔 Khi bấm bước vào, âm thanh chuông mõ & giọng đọc Mai Chi sẽ tự động được kích hoạt
+          </div>
+        </div>
+
+        <!-- Khối Phải: Cẩm Nang Hướng Dẫn Tính Năng -->
+        <div class="gate-card gate-guide-card">
+          <div class="gate-card-header">
+            <span class="gate-card-icon">☸</span>
+            <div>
+              <div class="gate-card-title">Cẩm Nang Tính Năng & Căn Số</div>
+              <div class="gate-card-desc">Hướng dẫn cú pháp để AI Mai Chi tự động xem & luận giải</div>
+            </div>
+          </div>
+
+          <div class="guide-tabs-nav" id="gateTabsNav">
+            <button type="button" class="guide-tab-btn active" data-tab="gateTabHoroscope">☸ 1. Căn Số Ngày Sinh</button>
+            <button type="button" class="guide-tab-btn" data-tab="gateTabPhone">📱 2. SIM Phong Thủy</button>
+            <button type="button" class="guide-tab-btn" data-tab="gateTabRitual">🔥 3. Nghi Thức & Xăm</button>
+          </div>
+
+          <!-- Tab 1: Căn Số Ngày Sinh -->
+          <div class="guide-tab-panel active" id="gateTabHoroscope">
+            <div class="guide-syntax-box">
+              <span class="syntax-label">Cú pháp bình luận trên Live:</span>
+              <code class="syntax-code">dd/mm/yyyy</code> hoặc <code class="syntax-code">dd-mm-yy</code>
+              <div class="syntax-examples">
+                Ví dụ: <strong>15/08/1995</strong> hoặc <strong>12-05-1998</strong> hoặc <strong>20/11/2000</strong>
+              </div>
+            </div>
+            <ul class="guide-feature-list">
+              <li><strong>Can Chi & Ngũ Hành:</strong> Tra cứu Can Chi 60 Hoa Giáp, Mệnh Nạp Âm bản mệnh.</li>
+              <li><strong>8 Vị Phật Bản Mệnh:</strong> Hộ trì tương ứng 12 con giáp (A Di Đà, Quán Thế Âm, Thiên Thủ...).</li>
+              <li><strong>Con Số Căn Mệnh:</strong> Thần số học Phật giáo soi rọi trực giác tâm linh.</li>
+              <li><strong>Giọng Đọc Mai Chi:</strong> AI tự động cất giọng luận giải bản mệnh tức thì.</li>
+            </ul>
+          </div>
+
+          <!-- Tab 2: SIM Phong Thủy -->
+          <div class="guide-tab-panel" id="gateTabPhone">
+            <div class="guide-syntax-box">
+              <span class="syntax-label">Cú pháp bình luận trên Live:</span>
+              <code class="syntax-code">[Năm sinh] [Số điện thoại / Đuôi sim]</code>
+              <div class="syntax-examples">
+                Ví dụ: <strong>1977 0948679289</strong> hoặc <strong>1988 đuôi 789</strong>
+              </div>
+            </div>
+            <ul class="guide-feature-list">
+              <li><strong>Ý Nghĩa 3 Số Cuối:</strong> Thế số Thần Tài 79, Lộc Phát 68, Sảnh Tiến 789, Mãi Phát 289...</li>
+              <li><strong>Hòa Hợp Bản Mệnh:</strong> Ngũ hành số đuôi tương sinh hoặc tương trợ mệnh năm sinh.</li>
+              <li><strong>Chấm Điểm Cát Lợi:</strong> Đánh giá thang điểm phong thủy dãy số.</li>
+              <li><strong>Lời Khuyên Phật Pháp:</strong> "Đức năng thắng số", tâm thiện tích đức thì họa lùi phúc tới.</li>
+            </ul>
+          </div>
+
+          <!-- Tab 3: Nghi Thức -->
+          <div class="guide-tab-panel" id="gateTabRitual">
+            <div class="guide-syntax-box">
+              <span class="syntax-label">Gõ Icon hoặc Từ Khóa bình luận:</span>
+              <div class="ritual-icons-grid">
+                <div class="ritual-item"><span>🔥</span> <em>thắp hương</em>: Dâng 3 nén tâm hương (+15 CĐ)</div>
+                <div class="ritual-item"><span>🏮</span> <em>thả đèn</em>: Thả hoa đăng cầu phúc (+20 CĐ)</div>
+                <div class="ritual-item"><span>🎋</span> <em>xin xăm</em>: Gieo 100 quẻ Quan Âm giải cát hung</div>
+                <div class="ritual-item"><span>🔔</span> <em>thỉnh chuông</em>: Đại Hồng Chung ngân vang (+10 CĐ)</div>
+                <div class="ritual-item"><span>🪵</span> <em>gõ mõ</em>: Gõ mõ tụng kinh niệm Phật (+5 CĐ)</div>
+                <div class="ritual-item"><span>🪷</span> <em>hoa sen</em>: Dâng hoa sen vàng cúng Tam Bảo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODAL HƯỚNG DẪN CHI TIẾT (MỞ LẠI BẤT KỲ LÚC NÀO TỪ CHÁNH ĐIỆN)
+       ==================================================================== -->
+  <div class="fortune-modal-overlay guide-modal-overlay" id="guideModal">
+    <div class="guide-modal-card">
+      <button type="button" class="modal-close-btn" id="btnCloseGuide">✕</button>
+      <div class="guide-modal-header">
+        <div class="guide-modal-icon">📖</div>
+        <div>
+          <h2 class="guide-modal-title">CẨM NANG CHIÊM BÁI & XEM CĂN SỐ TỬ VI</h2>
+          <p class="guide-modal-sub">Chùa Linh Ứng Online • Tương tác trực tiếp bằng bình luận TikTok & YouTube Live</p>
+        </div>
+      </div>
+
+      <div class="guide-modal-body">
+        <div class="guide-section-block">
+          <h3>☸ 1. Xem Căn Số Tử Vi & Phật Bản Mệnh Theo Ngày Sinh</h3>
+          <p>Hệ thống tự động nhận diện bình luận chứa ngày tháng năm sinh của bạn:</p>
+          <div class="guide-syntax-inline">
+            <strong>Cú pháp:</strong> <code>dd/mm/yyyy</code> hoặc <code>dd-mm-yy</code> (Ví dụ: <code>15/08/1995</code>, <code>12-05-1998</code>)
+          </div>
+          <ul>
+            <li><strong>Can Chi & Nạp Âm:</strong> Tính chính xác 60 Hoa Giáp, Mệnh Ngũ Hành Nạp Âm.</li>
+            <li><strong>Phật Bản Mệnh:</strong> Tra cứu vị Phật bảo hộ trọn đời cho con giáp của bạn.</li>
+            <li><strong>Số Căn Mệnh (Thần số học Phật giáo):</strong> Tính từ tổng các chữ số ngày tháng năm sinh.</li>
+            <li><strong>Giọng đọc Mai Chi:</strong> Đọc tóm tắt căn duyên thanh thoát, dịu êm.</li>
+          </ul>
+        </div>
+
+        <div class="guide-section-block">
+          <h3>📱 2. Xem SIM Phong Thủy (3 Số Cuối) Kết Hợp Năm Sinh</h3>
+          <p>Luận giải năng lượng cát hung của dãy số điện thoại đối chiếu với bản mệnh:</p>
+          <div class="guide-syntax-inline">
+            <strong>Cú pháp:</strong> <code>[Năm sinh] [Số điện thoại]</code> (Ví dụ: <code>1977 0948679289</code> hoặc <code>1988 đuôi 789</code>)
+          </div>
+          <ul>
+            <li><strong>Luận giải 3 số cuối:</strong> Phân tích thế số phong thủy nổi tiếng (Thần Tài, Lộc Phát, Sảnh Tiến...).</li>
+            <li><strong>Quan hệ Ngũ Hành:</strong> Xem ngũ hành đuôi SIM Tương Sinh, Tương Hỗ hay Cát Lợi với năm sinh.</li>
+            <li><strong>Lời răn Phật pháp:</strong> Đức năng thắng số, tâm thiện tạo phước thì vạn sự hanh thông.</li>
+          </ul>
+        </div>
+
+        <div class="guide-section-block">
+          <h3>🔥 3. Nghi Thức Dâng Hương, Gieo Quẻ & Thả Đèn</h3>
+          <div class="ritual-icons-grid full-width">
+            <div class="ritual-item"><span>🔥</span> Hoặc comment <strong>thắp hương</strong>: Dâng 3 nén hương thơm (+15 CĐ)</div>
+            <div class="ritual-item"><span>🏮</span> Hoặc comment <strong>thả đèn</strong> / <strong>cầu an</strong>: Thả hoa đăng (+20 CĐ)</div>
+            <div class="ritual-item"><span>🎋</span> Hoặc comment <strong>xin xăm</strong> / <strong>gieo quẻ</strong>: Rút 100 quẻ Quan Âm linh ứng</div>
+            <div class="ritual-item"><span>🔔</span> Hoặc comment <strong>thỉnh chuông</strong>: Thỉnh Đại Hồng Chung (+10 CĐ)</div>
+            <div class="ritual-item"><span>🪵</span> Hoặc comment <strong>gõ mõ</strong>: Gõ mõ tụng kinh niệm Phật (+5 CĐ)</div>
+            <div class="ritual-item"><span>🪷</span> Hoặc comment <strong>hoa sen</strong>: Dâng sen vàng cúng dường Tam Bảo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guide-modal-footer">
+        <button type="button" class="dock-btn gold" id="btnGuideUnderstood">Đã Hiểu • Kính Cẩn Chiêm Bái 🙏</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/audio.js?v=2.3.0"></script>
+  <script src="/js/particles.js?v=2.3.0"></script>
+  <script src="/js/live.js?v=2.3.0"></script>
 </body>
 </html>

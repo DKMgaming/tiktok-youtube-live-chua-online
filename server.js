@@ -1861,6 +1861,14 @@ async function handleRpcCall(method, params = {}) {
       return Rituals.readHoroscope(params);
     case 'temple.readPhoneHoroscope':
       return Rituals.readPhoneHoroscope(params);
+    case 'temple.enterGate': {
+      const user = sanitizeUserName(params.user) || 'Thí Chủ';
+      const wish = sanitizeWishText(params.wish) || 'Kính cẩn bước qua Cổng Tam Quan vào Chánh Điện lễ Phật';
+      const devotee = recordDevotee(user, params.uniqueId || user, params.avatar || '', 5, 0, 0, wish);
+      saveState();
+      broadcastNotification('temple.state', getPublicState());
+      return { ok: true, devotee, state: getPublicState() };
+    }
     case 'temple.grandCeremony':
       return Rituals.grandCeremony(params);
     case 'temple.updateSettings':

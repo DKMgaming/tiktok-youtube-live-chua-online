@@ -866,7 +866,8 @@
   }
 
   function getFormInput() {
-    const user = document.getElementById('inputDevoteeName')?.value.trim() || 'Quỳnh_Finn';
+    const savedName = localStorage.getItem('temple_devotee_name');
+    const user = document.getElementById('inputDevoteeName')?.value.trim() || savedName || 'Tâm An';
     const wish =
       document.getElementById('inputDevoteeWish')?.value.trim() ||
       'Cầu cho gia đình bình an, tài lộc hanh thông';
@@ -1055,4 +1056,89 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
   }
+
+  // ========================================================================
+  // 11. CỔNG TAM QUAN — GHI DANH PHÁP DANH & HƯỚNG DẪN CĂN SỐ
+  // ========================================================================
+  const gateOverlay = document.getElementById('templeGateOverlay');
+  const gateDevoteeName = document.getElementById('gateDevoteeName');
+  const gateDevoteeWish = document.getElementById('gateDevoteeWish');
+  const btnEnterTemple = document.getElementById('btnEnterTemple');
+  const isObsStreamMode = window.location.search.includes('obs=1');
+
+  // Nạp pháp danh đã lưu từ trước nếu có
+  const savedDevotee = localStorage.getItem('temple_devotee_name');
+  if (savedDevotee) {
+    if (gateDevoteeName) gateDevoteeName.value = savedDevotee;
+    const inputDev = document.getElementById('inputDevoteeName');
+    if (inputDev) inputDev.value = savedDevotee;
+  }
+
+  // Tự động bỏ qua Cổng nếu đang chạy nguồn trình duyệt OBS (?obs=1)
+  if (isObsStreamMode) {
+    gateOverlay?.classList.add('gate-closed');
+  }
+
+  // Chuyển đổi tab cẩm nang trên Cổng Tam Quan
+  const gateTabBtns = document.querySelectorAll('.guide-tab-btn');
+  gateTabBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      gateTabBtns.forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('.guide-tab-panel').forEach((p) => p.classList.remove('active'));
+      btn.classList.add('active');
+      const targetId = btn.getAttribute('data-tab');
+      if (targetId) {
+        document.getElementById(targetId)?.classList.add('active');
+      }
+    });
+  });
+
+  // Sự kiện khi bấm "BƯỚC QUA CỔNG VÀO CHÁNH ĐIỆN"
+  if (btnEnterTemple) {
+    btnEnterTemple.addEventListener('click', () => {
+      const devName = gateDevoteeName?.value.trim() || savedDevotee || 'Tâm An';
+      const devWish = gateDevoteeWish?.value.trim() || 'Cầu gia đạo bình an, tài lộc hanh thông';
+
+      localStorage.setItem('temple_devotee_name', devName);
+      const inputDev = document.getElementById('inputDevoteeName');
+      if (inputDev) inputDev.value = devName;
+      const inputWish = document.getElementById('inputDevoteeWish');
+      if (inputWish) inputWish.value = devWish;
+
+      // 1. Kích hoạt âm thanh chùa & bắt đầu nhạc nền
+      audio.ensureContext();
+      audio.playIncenseChime();
+      audio.playTempleBell(0.85);
+      if (audio.bgMusicEnabled) {
+        audio.startZenAmbience();
+      }
+
+      // 2. Gửi RPC ghi danh qua Cổng vào Chánh Điện
+      callRpc('temple.enterGate', { user: devName, wish: devWish });
+
+      // 3. Mở cổng & chuyển vào Chánh Điện
+      gateOverlay?.classList.add('gate-closed');
+    });
+  }
+
+  // Sự kiện mở & đóng Modal Cẩm Nang Hướng Dẫn Chi Tiết
+  const guideModal = document.getElementById('guideModal');
+  const btnOpenGuide = document.getElementById('btnOpenGuide');
+  const btnDockGuide = document.getElementById('btnDockGuide');
+  const btnCloseGuide = document.getElementById('btnCloseGuide');
+  const btnGuideUnderstood = document.getElementById('btnGuideUnderstood');
+
+  const openGuide = () => {
+    audio.ensureContext();
+    audio.playIncenseChime();
+    guideModal?.classList.add('visible');
+  };
+  const closeGuide = () => {
+    guideModal?.classList.remove('visible');
+  };
+
+  btnOpenGuide?.addEventListener('click', openGuide);
+  btnDockGuide?.addEventListener('click', openGuide);
+  btnCloseGuide?.addEventListener('click', closeGuide);
+  btnGuideUnderstood?.addEventListener('click', closeGuide);
 })();
